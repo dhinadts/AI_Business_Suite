@@ -48,7 +48,7 @@ Use these settings for the backend service:
 
 ```text
 Root Directory: backend
-Build Command: npm install && npx prisma generate && npm run build
+Build Command: npm install && npm run render:build
 Start Command: npm run start
 ```
 
@@ -62,7 +62,16 @@ CORS_ORIGIN=<your Flutter web/PWA URL>
 PORT=4000
 ```
 
-After creating or changing the live database schema, run from this folder:
+`npm run render:build` performs all backend deployment preparation:
+
+- normalizes an Atlas URL that is missing `/ai_business_suite`
+- runs `prisma generate`
+- runs `prisma db push --skip-generate`
+- builds NestJS
+
+If the `ai_business_suite` database or required collections do not exist, Prisma `db push` creates them from `prisma/schema.prisma`.
+
+After changing the live database schema manually, you can also run from this folder:
 
 ```bash
 npx prisma db push --skip-generate
