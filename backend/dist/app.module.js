@@ -12,6 +12,7 @@ const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
 const associations_module_1 = require("./associations/associations.module");
 const companies_module_1 = require("./companies/companies.module");
+const health_module_1 = require("./health/health.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const users_module_1 = require("./users/users.module");
 let AppModule = class AppModule {
@@ -26,6 +27,7 @@ exports.AppModule = AppModule = __decorate([
             associations_module_1.AssociationsModule,
             users_module_1.UsersModule,
             companies_module_1.CompaniesModule,
+            health_module_1.HealthModule,
         ],
     })
 ], AppModule);

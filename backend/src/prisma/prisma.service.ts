@@ -22,7 +22,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   }
 }
 
-function normalizeMongoUrl(url?: string) {
+export function normalizeMongoUrl(url?: string) {
   if (!url) return url;
   const trimmed = url.trim();
   const quote = trimmed.startsWith('"') || trimmed.startsWith("'") ? trimmed[0] : '';
