@@ -29,4 +29,3 @@ __decorate([
     (0, class_validator_1.IsEnum)(client_1.DevicePlatform),
     __metadata("design:type", String)
 ], RegisterDeviceTokenDto.prototype, "platform", void 0);
-//# sourceMappingURL=register-device-token.dto.js.map

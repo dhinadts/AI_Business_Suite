@@ -185,4 +185,3 @@ exports.AssociationsService = AssociationsService = __decorate([
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         fcm_service_1.FcmService])
 ], AssociationsService);
-//# sourceMappingURL=associations.service.js.map

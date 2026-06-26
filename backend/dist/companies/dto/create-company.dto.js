@@ -134,4 +134,3 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], CreateCompanyDto.prototype, "hasGST", void 0);
-//# sourceMappingURL=create-company.dto.js.map

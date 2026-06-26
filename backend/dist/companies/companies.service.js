@@ -51,4 +51,3 @@ exports.CompaniesService = CompaniesService = __decorate([
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         company_classifier_service_1.CompanyClassifierService])
 ], CompaniesService);
-//# sourceMappingURL=companies.service.js.map

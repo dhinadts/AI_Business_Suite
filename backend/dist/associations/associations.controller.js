@@ -89,4 +89,3 @@ exports.AssociationsController = AssociationsController = __decorate([
     (0, common_1.Controller)('associations'),
     __metadata("design:paramtypes", [associations_service_1.AssociationsService])
 ], AssociationsController);
-//# sourceMappingURL=associations.controller.js.map

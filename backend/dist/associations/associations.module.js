@@ -22,4 +22,3 @@ exports.AssociationsModule = AssociationsModule = __decorate([
         providers: [associations_service_1.AssociationsService, fcm_service_1.FcmService],
     })
 ], AssociationsModule);
-//# sourceMappingURL=associations.module.js.map

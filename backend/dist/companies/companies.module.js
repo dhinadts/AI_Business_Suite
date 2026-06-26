@@ -21,4 +21,3 @@ exports.CompaniesModule = CompaniesModule = __decorate([
         exports: [company_classifier_service_1.CompanyClassifierService],
     })
 ], CompaniesModule);
-//# sourceMappingURL=companies.module.js.map

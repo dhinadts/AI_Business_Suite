@@ -71,4 +71,3 @@ __decorate([
     (0, class_validator_1.IsEnum)(client_1.BusinessType, { each: true }),
     __metadata("design:type", Array)
 ], PublishAssociationNotificationDto.prototype, "targetTypes", void 0);
-//# sourceMappingURL=publish-association-notification.dto.js.map

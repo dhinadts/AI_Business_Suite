@@ -35,4 +35,3 @@ async function bootstrap() {
     console.log(`Swagger docs available at http://localhost:${port}/docs`);
 }
 bootstrap();
-//# sourceMappingURL=main.js.map

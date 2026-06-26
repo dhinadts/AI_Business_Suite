@@ -1,5 +1,6 @@
 import '../data/auth_api.dart';
 import '../data/auth_repository.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../../core/network/api_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -142,6 +143,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   String _message(Object error) {
+    if (error is DioException) {
+      if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.sendTimeout) {
+        return 'The server is taking longer than usual to respond. Please try again in a minute.';
+      }
+      if (error.response?.statusCode == 500) {
+        return 'Backend server error. Please check the Render environment variables and try again.';
+      }
+      if (error.response?.statusCode == 401) {
+        return 'Invalid email or password.';
+      }
+      if (error.type == DioExceptionType.connectionError) {
+        return 'Cannot connect to the backend API. Please check internet/server status.';
+      }
+    }
     final text = error.toString();
     return text.contains('SocketException')
         ? 'Cannot connect to backend API.'

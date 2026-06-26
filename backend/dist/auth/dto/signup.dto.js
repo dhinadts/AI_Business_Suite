@@ -50,4 +50,3 @@ __decorate([
     (0, class_transformer_1.Type)(() => create_company_dto_1.CreateCompanyDto),
     __metadata("design:type", create_company_dto_1.CreateCompanyDto)
 ], SignupDto.prototype, "company", void 0);
-//# sourceMappingURL=signup.dto.js.map

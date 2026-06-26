@@ -14,6 +14,7 @@ const prisma = new PrismaClient();
 const demos = [
   {
     email: 'grocery@demo.com',
+    password: 'Password@123',
     fullName: 'Grocery Demo Owner',
     company: {
       legalName: 'ABC Stores',
@@ -35,6 +36,7 @@ const demos = [
   },
   {
     email: 'small@demo.com',
+    password: 'Password@123',
     fullName: 'Small Business Owner',
     company: {
       legalName: 'Small Traders Pvt Ltd',
@@ -53,6 +55,7 @@ const demos = [
   },
   {
     email: 'medium@demo.com',
+    password: 'Password@123',
     fullName: 'Medium Business Owner',
     company: {
       legalName: 'Growth Distribution LLP',
@@ -71,6 +74,7 @@ const demos = [
   },
   {
     email: 'large@demo.com',
+    password: 'Password@123',
     fullName: 'Large Enterprise Owner',
     company: {
       legalName: 'Enterprise Manufacturing Ltd',
@@ -90,9 +94,9 @@ const demos = [
 ];
 
 async function main() {
-  const passwordHash = await bcrypt.hash('Password@123', 12);
   const seededUsers = [];
   for (const demo of demos) {
+    const passwordHash = await bcrypt.hash(demo.password, 12);
     await prisma.user.deleteMany({ where: { email: demo.email } });
     const company = await prisma.company.create({ data: demo.company });
     const user = await prisma.user.create({
@@ -161,6 +165,12 @@ async function main() {
   });
 
   console.log('Seeded demo users and association notifications');
+  console.table(
+    demos.map((demo) => ({
+      email: demo.email,
+      password: demo.password,
+    })),
+  );
 }
 
 main()

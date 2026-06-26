@@ -11,8 +11,9 @@ class ApiClient {
             'API_BASE_URL',
             defaultValue: 'https://ai-business-suite.onrender.com',
           ),
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 15),
+          connectTimeout: const Duration(seconds: 30),
+          sendTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 75),
           headers: {'Content-Type': 'application/json'},
         ),
       ) {

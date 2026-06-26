@@ -36,4 +36,3 @@ exports.AuthModule = AuthModule = __decorate([
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy, company_classifier_service_1.CompanyClassifierService],
     })
 ], AuthModule);
-//# sourceMappingURL=auth.module.js.map

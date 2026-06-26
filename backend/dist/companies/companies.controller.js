@@ -54,4 +54,3 @@ exports.CompaniesController = CompaniesController = __decorate([
     (0, common_1.Controller)('companies'),
     __metadata("design:paramtypes", [companies_service_1.CompaniesService])
 ], CompaniesController);
-//# sourceMappingURL=companies.controller.js.map
