@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DHINADTS ERP - Inventory Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .low-stock-gradient {
+            background: linear-gradient(90deg, rgba(186, 26, 26, 0.05) 0%, rgba(186, 26, 26, 0.02) 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e1e3e4;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #c4c6cf;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#e1e3e4",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#004f4f",
+                      "surface": "#f8f9fa",
+                      "surface-container-highest": "#e1e3e4",
+                      "surface-container-lowest": "#ffffff",
+                      "outline": "#74777f",
+                      "on-surface-variant": "#44474e",
+                      "tertiary-container": "#002626",
+                      "on-background": "#191c1d",
+                      "on-secondary-fixed-variant": "#6e3900",
+                      "on-tertiary-fixed": "#002020",
+                      "secondary-fixed-dim": "#ffb77d",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "inverse-surface": "#2e3132",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#aec7f6",
+                      "surface-bright": "#f8f9fa",
+                      "surface-container-low": "#f3f4f5",
+                      "on-primary-fixed": "#001b3d",
+                      "on-secondary-container": "#603100",
+                      "secondary-fixed": "#ffdcc3",
+                      "primary": "#000a1e",
+                      "secondary-container": "#fd8b00",
+                      "surface-tint": "#465f88",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#aec7f6",
+                      "primary-container": "#002147",
+                      "surface-container-high": "#e7e8e9",
+                      "primary-fixed": "#d6e3ff",
+                      "secondary": "#904d00",
+                      "on-error": "#ffffff",
+                      "surface-dim": "#d9dadb",
+                      "tertiary-fixed-dim": "#76d6d5",
+                      "on-primary-container": "#708ab5",
+                      "tertiary-fixed": "#93f2f2",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-tertiary-container": "#2f9696",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#2f1500",
+                      "tertiary": "#000d0d",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c4c6cf",
+                      "error": "#ba1a1a",
+                      "background": "#f8f9fa",
+                      "surface-container": "#edeeef",
+                      "on-surface": "#191c1d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "section-gap": "32px",
+                      "card-padding": "20px",
+                      "container-margin": "24px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "headline-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-1px", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden h-screen flex">
+<!-- NavigationDrawer (Shared Component) -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col z-40 bg-surface-container-lowest border-r border-outline-variant w-[280px] hidden lg:flex shadow-sm">
+<div class="flex flex-col h-full">
+<div class="px-6 py-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">dashboard_customize</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-black text-primary">DHINADTS ERP</h1>
+<p class="text-on-surface-variant font-label-lg">Admin Panel <span class="ml-2 opacity-50">v2.1</span></p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full mx-3 my-1 transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<!-- Invoices -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full mx-3 my-1 transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-lg text-label-lg">Invoices</span>
+</a>
+<!-- Inventory (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-full mx-3 my-1 transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-lg text-label-lg">Inventory</span>
+</a>
+<!-- GST Reports -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full mx-3 my-1 transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-lg text-label-lg">GST Reports</span>
+</a>
+<!-- AI Assistant -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full mx-3 my-1 transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-lg text-label-lg">AI Assistant</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full mx-3 my-1 transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+<div class="p-6 border-t border-outline-variant bg-surface-container-low/50">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full border border-outline-variant" data-alt="A professional headshot of a corporate administrator for an ERP software, wearing business attire, clear background, high resolution, soft studio lighting, modern minimalist professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNKV9QRCjMTcw9yniVKP_cDh52v2lLBuNZl7OfI299EbcW7XvDQhuy-VUDRwjc0HIpFgC5itW7OueiAI2R1Rw6cNs8g7ujrviAyuQWNL6fSlrAEpvBO4mroPEb_2QABqh70RUcBdqT_7TAfPtuVieaa37UxV3Fta1C512Y9Aav4OiKDsQUvWwNbNL7O2PsRKSAu3xuSLmynI3LxNiR85UlxWKUq3uNoLg3xGbkdsxzDHZ3qgYaV6nLdT8U3XPE9MpdJZG-shFk2wc"/>
+<div class="flex-1 min-w-0">
+<p class="font-label-lg text-label-lg text-on-surface truncate">Amit Sharma</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Super Admin</p>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant">logout</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col lg:ml-[280px] h-screen overflow-hidden">
+<!-- TopAppBar (Shared Component) -->
+<header class="bg-surface docked full-width top-0 border-b border-outline-variant h-16 flex justify-between items-center w-full px-container-margin z-30">
+<div class="flex items-center gap-4">
+<button class="lg:hidden material-symbols-outlined text-primary">menu</button>
+<h2 class="font-headline-md text-headline-md font-bold tracking-tight text-primary">Inventory &amp; Products</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex bg-surface-container rounded-full px-4 py-2 items-center gap-2 border border-outline-variant/30">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48" placeholder="Search across ERP..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors">notifications</button>
+<button class="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-lg flex items-center gap-2 font-label-lg shadow-sm active:scale-95 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                    Add New Product
+                </button>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 overflow-y-auto p-container-margin space-y-6 custom-scrollbar">
+<!-- Low Stock Alerts Banner -->
+<section class="low-stock-gradient border border-error/20 rounded-xl px-card-padding py-4 flex items-center gap-4 animate-pulse">
+<div class="bg-error text-on-error w-10 h-10 rounded-lg flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div class="flex-1">
+<p class="font-label-lg text-error font-bold">CRITICAL ALERTS: Low Stock Level</p>
+<p class="text-body-md text-on-surface-variant">4 products have reached critical reorder points in the Bengaluru Warehouse.</p>
+</div>
+<button class="text-error font-label-lg hover:underline decoration-2 underline-offset-4">Review All Alerts</button>
+</section>
+<!-- Filters and Tools Row -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter items-end">
+<div class="space-y-2">
+<label class="font-label-lg text-on-surface-variant">Search SKU/Name</label>
+<div class="flex items-center bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">manage_search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm" placeholder="Ex: SKU-4509..." type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-lg text-on-surface-variant">Category</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-primary focus:border-primary">
+<option>All Categories</option>
+<option>Electronics</option>
+<option>Machinery</option>
+<option>Raw Materials</option>
+<option>Packaging</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-label-lg text-on-surface-variant">Stock Level</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-primary focus:border-primary">
+<option>All Levels</option>
+<option>Critical (&lt;10)</option>
+<option>Low (10-50)</option>
+<option>Healthy (50+)</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-label-lg text-on-surface-variant">Warehouse</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-primary focus:border-primary">
+<option>Global View</option>
+<option>Mumbai Hub</option>
+<option>Delhi Central</option>
+<option>Bengaluru Branch</option>
+</select>
+</div>
+</section>
+<!-- Inventory Data Table -->
+<section class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-card-padding py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Product Name</th>
+<th class="px-card-padding py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">SKU</th>
+<th class="px-card-padding py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Category</th>
+<th class="px-card-padding py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Stock Level</th>
+<th class="px-card-padding py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-right">Price (₹)</th>
+<th class="px-card-padding py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-variant/20 transition-colors group">
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A macro product photography of an industrial microchip, high-tech engineering detail, professional lighting, corporate white background, minimalist industrial aesthetic, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK9gJRajSUHz2Ga9fEg3E1aBeab89zkpPURZswk5Im5B22kAeHZEfsx7gmWE_5E8XT5tmiPYp2SW4iOgAwAx2WATbSGO_q3xCaJOnMyXV8e7fBSb__G7NOfjR9W_do3wG2WubqWFgnxS6EeAc7-etjDBOsCFaXZIvN9j_dRIe_xtt3hXCV1NwcWsqkmiMjv1Fry-09hOOyigJ6UedWcNhfVyyHFwZz13zkXnCHCsQ124vZp9YH3FzCCChM2HSa5C2aZ3h41jPqxqs"/>
+</div>
+<div>
+<p class="font-body-md font-semibold text-primary">Advanced Logic Core X1</p>
+<p class="text-[11px] text-on-surface-variant">Last updated 2h ago</p>
+</div>
+</div>
+</td>
+<td class="px-card-padding py-4 font-mono text-xs text-on-surface-variant">CHIP-LCX-900</td>
+<td class="px-card-padding py-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">Electronics</span>
+</td>
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-error h-full" style="width: 8%"></div>
+</div>
+<span class="text-error font-bold text-xs uppercase">8 Units (Critical)</span>
+</div>
+</td>
+<td class="px-card-padding py-4 text-right font-semibold">1,24,500.00</td>
+<td class="px-card-padding py-4">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">edit</button>
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">analytics</button>
+<button class="material-symbols-outlined text-error text-lg p-1 hover:bg-error/10 rounded">delete</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-variant/20 transition-colors group">
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A 3D render of a heavy-duty industrial hydraulic valve, steel metallic texture, professional studio lighting, soft shadows, clean modern corporate visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTZQuXDXPtEWvTQvLnX4oFiQAMCLue16Wm3KNdekugOKhZ83CjGqyGJH_tARjhiKdUZWj4aRMcx3-tMYVzXNHITrw8tenzDhiIdvPIt3Qc8Tuqb0g03G1LMnw74B5sFkm2oZTQd58V66lItNX-0ToYhG47Ncpu2iNdkTuaKqIio1mY3RlsAFXdQF8p2VqwBBhw3IYNhm156pPT74P05DGkg6ZqDBtNgi-LVWMH76-DC57DsIozOjx8GpLeBQJ0kyfnymm4Bs9VGIU"/>
+</div>
+<div>
+<p class="font-body-md font-semibold text-primary">Hydraulic Power Valve V2</p>
+<p class="text-[11px] text-on-surface-variant">Last updated 5h ago</p>
+</div>
+</div>
+</td>
+<td class="px-card-padding py-4 font-mono text-xs text-on-surface-variant">MECH-HPV-042</td>
+<td class="px-card-padding py-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">Machinery</span>
+</td>
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-[#fd8b00] h-full" style="width: 42%"></div>
+</div>
+<span class="text-[#904d00] font-bold text-xs uppercase">42 Units (Low)</span>
+</div>
+</td>
+<td class="px-card-padding py-4 text-right font-semibold">18,200.00</td>
+<td class="px-card-padding py-4">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">edit</button>
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">analytics</button>
+<button class="material-symbols-outlined text-error text-lg p-1 hover:bg-error/10 rounded">delete</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-variant/20 transition-colors group">
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Rolls of industrial copper wire, shiny metallic surfaces, organized warehouse setting, professional commercial photography, light-mode corporate palette, bright and clear." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtcNehME9c7JEDrgmDKwCUIJoa83i4VZr_58HUjvYgG1tncljjgzCPkiAHtuiixT_AOoMqAsLq0LQd1DQveM9S0eQjTOtpedUd5HQXBFsyeu_rBAFW6hdD-K3ZDQrQKAnXxah06LPf-zkA3jgsPnzCZMNJArZb0I1IYMwKgviIEjBxXUD4ONtaLQ9gi-byaHGOnc4KgY9Dwt1dJz8TSssuiF34zTUXMFEDRdEH2tixGujvoYniBgxL49pnDTZglJajkBeutNKYR6s"/>
+</div>
+<div>
+<p class="font-body-md font-semibold text-primary">High-Grade Copper Coil</p>
+<p class="text-[11px] text-on-surface-variant">Last updated 1d ago</p>
+</div>
+</div>
+</td>
+<td class="px-card-padding py-4 font-mono text-xs text-on-surface-variant">RAW-COP-100</td>
+<td class="px-card-padding py-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">Raw Materials</span>
+</td>
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 85%"></div>
+</div>
+<span class="text-primary font-bold text-xs uppercase">1,240 Units</span>
+</div>
+</td>
+<td class="px-card-padding py-4 text-right font-semibold">4,350.00</td>
+<td class="px-card-padding py-4">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">edit</button>
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">analytics</button>
+<button class="material-symbols-outlined text-error text-lg p-1 hover:bg-error/10 rounded">delete</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-variant/20 transition-colors group">
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Minimalist design of sustainable cardboard packaging boxes stacked neatly, bright studio lighting, soft shadows, professional enterprise grade aesthetic, corporate clean look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJPQWDWNGLp0G_roq8fQHBg9GZhAQVrzqUKfOLzZmnDiHT4f-CLVKsWPWMbAdw5-jc9fVLwJUy6cile78Gi_GVcEfapZfYUkBGlIRyfp3mJmReR835J9h4X1tW9GN5T9fKc9qBZDQT1F0_-5fqq4zvj3GYXQpT4gt_Ky7wB79g5cCiOcOhMMpxSHSuaF2fJxPmC8okHqqSxSUFPjOvnI-uohr7FoOVDpypXTCFPEX5ThrTJpN0Bzs-9ZN0JrK5XOXrbP3wF8MlH_Y"/>
+</div>
+<div>
+<p class="font-body-md font-semibold text-primary">Eco-Friendly Shipping Box</p>
+<p class="text-[11px] text-on-surface-variant">Last updated 3h ago</p>
+</div>
+</div>
+</td>
+<td class="px-card-padding py-4 font-mono text-xs text-on-surface-variant">PACK-EBX-L</td>
+<td class="px-card-padding py-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">Packaging</span>
+</td>
+<td class="px-card-padding py-4">
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 95%"></div>
+</div>
+<span class="text-primary font-bold text-xs uppercase">4,500 Units</span>
+</div>
+</td>
+<td class="px-card-padding py-4 text-right font-semibold">85.00</td>
+<td class="px-card-padding py-4">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">edit</button>
+<button class="material-symbols-outlined text-primary text-lg p-1 hover:bg-primary/10 rounded">analytics</button>
+<button class="material-symbols-outlined text-error text-lg p-1 hover:bg-error/10 rounded">delete</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-container-low border-t border-outline-variant flex justify-between items-center">
+<p class="font-label-lg text-on-surface-variant">Showing 1-4 of 1,280 products</p>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-variant transition-colors text-sm">Previous</button>
+<button class="px-3 py-1 rounded bg-primary text-on-primary text-sm shadow-sm">1</button>
+<button class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-variant transition-colors text-sm">2</button>
+<button class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-variant transition-colors text-sm">3</button>
+<button class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-variant transition-colors text-sm">Next</button>
+</div>
+</div>
+</section>
+<!-- Stock Analytics & Quick Insights -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest p-card-padding rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between mb-4">
+<span class="material-symbols-outlined text-secondary-container bg-secondary-container/10 p-2 rounded-lg">inventory</span>
+<span class="text-xs text-on-surface-variant">+12% vs last month</span>
+</div>
+<h3 class="text-on-surface-variant font-label-lg uppercase tracking-wider mb-1">Total Inventory Value</h3>
+<p class="font-headline-md text-headline-md text-primary">₹ 4.85 Cr</p>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant/30 flex items-center justify-between">
+<span class="text-xs text-on-surface-variant">Assets across 4 Warehouses</span>
+<button class="material-symbols-outlined text-primary text-sm">arrow_forward</button>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between mb-4">
+<span class="material-symbols-outlined text-error bg-error/10 p-2 rounded-lg">priority_high</span>
+<span class="text-xs text-error font-bold">Action Required</span>
+</div>
+<h3 class="text-on-surface-variant font-label-lg uppercase tracking-wider mb-1">Out of Stock Items</h3>
+<p class="font-headline-md text-headline-md text-primary">12 Items</p>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant/30 flex items-center justify-between">
+<span class="text-xs text-on-surface-variant">Potential Revenue Loss: ₹ 2.4L</span>
+<button class="material-symbols-outlined text-primary text-sm">arrow_forward</button>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-xl border border-outline-variant shadow-sm border-l-4 border-l-secondary-container">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary-container">smart_toy</span>
+<h3 class="font-label-lg font-bold text-primary">AI Reorder Suggestion</h3>
+</div>
+<p class="text-body-md text-on-surface-variant mb-4 italic">"Based on current sales velocity of 'Copper Coil', I suggest ordering 500 units before Friday to avoid stockout."</p>
+<button class="w-full bg-primary text-on-primary py-2 rounded-lg font-label-lg hover:opacity-90 transition-opacity">Generate PO Now</button>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Hidden on Desktop) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-2 pb-safe bg-surface border-t border-outline-variant lg:hidden shadow-[0_-2px_8px_rgba(0,10,30,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Sales</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Stock</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="font-label-sm text-label-sm">Menu</span>
+</a>
+</nav>
+<script>
+        // Simple interaction for the search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchContainer = searchInput?.parentElement;
+        
+        searchInput?.addEventListener('focus', () => {
+            searchContainer.classList.add('ring-2', 'ring-primary/20', 'border-primary');
+        });
+        
+        searchInput?.addEventListener('blur', () => {
+            searchContainer.classList.remove('ring-2', 'ring-primary/20', 'border-primary');
+        });
+
+        // Toggle mobile drawer (simplified)
+        document.querySelector('.material-symbols-outlined:contains("menu")')?.addEventListener('click', () => {
+            console.log("Toggle mobile drawer");
+        });
+    </script>
+</body></html>

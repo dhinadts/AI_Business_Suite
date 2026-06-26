@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GSTR-1 Filing Review | Bharat AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#fd8b00",
+                    "secondary": "#904d00",
+                    "surface-container-high": "#e7e8e9",
+                    "surface-bright": "#f8f9fa",
+                    "tertiary-fixed": "#93f2f2",
+                    "surface-container": "#edeeef",
+                    "on-secondary-container": "#603100",
+                    "on-secondary-fixed-variant": "#6e3900",
+                    "surface-variant": "#e1e3e4",
+                    "on-secondary-fixed": "#2f1500",
+                    "tertiary-fixed-dim": "#76d6d5",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-tertiary-container": "#2f9696",
+                    "on-error": "#ffffff",
+                    "primary-container": "#002147",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#74777f",
+                    "background": "#f8f9fa",
+                    "tertiary-container": "#002626",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-primary-container": "#708ab5",
+                    "on-tertiary-fixed": "#002020",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#aec7f6",
+                    "on-primary-fixed-variant": "#2d476f",
+                    "on-surface-variant": "#44474e",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#ffdcc3",
+                    "surface": "#f8f9fa",
+                    "on-primary-fixed": "#001b3d",
+                    "inverse-surface": "#2e3132",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f3f4f5",
+                    "primary": "#000a1e",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#ffb77d",
+                    "on-tertiary-fixed-variant": "#004f4f",
+                    "on-background": "#191c1d",
+                    "tertiary": "#000d0d",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#aec7f6",
+                    "outline-variant": "#c4c6cf",
+                    "surface-dim": "#d9dadb",
+                    "surface-tint": "#465f88"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "container-margin": "24px",
+                    "section-gap": "32px",
+                    "gutter": "16px",
+                    "card-padding": "20px"
+            },
+            "fontFamily": {
+                    "label-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-1px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .step-line {
+            height: 2px;
+            flex-grow: 1;
+            background-color: #E1E3E4;
+            margin: 0 8px;
+            position: relative;
+            top: 12px;
+        }
+        .step-line.active {
+            background-color: #002147;
+        }
+        .ai-shimmer {
+            background: linear-gradient(90deg, rgba(253,139,0,0.1) 0%, rgba(0,33,71,0.05) 50%, rgba(253,139,0,0.1) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<!-- Top App Bar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-margin h-16 bg-surface dark:bg-background">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="arrow_back">arrow_back</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">GSTR-1 Review</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help">help</span>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of an Indian business executive in a modern office, soft natural lighting, high resolution, minimalist aesthetic with navy blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdvr2WCvzpDjAvoXB_Z1sZam4mCx-MA6vGEYE6wQvReTLlRvjR7lC_JJXR6YiL2I5BicX4E9EE1LjIHwsZFnpAmsiUORazOYDEjHMlgw63z1pNyVa-xA7Zo8CSAC-2-bj_NhnLz71thNA-PRADkHZF22x8RPxa7nGiwLQoOvx_HQz1hDTjeACfMKW12Zn4gRLzrHNEhsmdmCN_Z4wAGMmll7QAJ4mb9NiuXZw8sT_1w8jWAudbMDF_LQcty97LEUvrBab9huFD0ns"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-32 px-4 space-y-6">
+<!-- Step Indicator -->
+<section class="bg-surface-container-lowest rounded-xl p-4 shadow-sm">
+<div class="flex justify-between items-start relative">
+<div class="flex flex-col items-center z-10">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] text-on-primary font-bold">1</div>
+<span class="font-label-sm text-label-sm mt-1 text-primary">Review</span>
+</div>
+<div class="step-line active"></div>
+<div class="flex flex-col items-center z-10">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center text-[10px] text-outline font-bold">2</div>
+<span class="font-label-sm text-label-sm mt-1 text-on-surface-variant">Reconcile</span>
+</div>
+<div class="step-line"></div>
+<div class="flex flex-col items-center z-10">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant bg-surface flex items-center justify-center text-[10px] text-outline font-bold">3</div>
+<span class="font-label-sm text-label-sm mt-1 text-on-surface-variant">Submit</span>
+</div>
+</div>
+</section>
+<!-- AI Reconciliation Status -->
+<section class="ai-shimmer border border-secondary/20 rounded-xl p-4 relative overflow-hidden">
+<div class="flex items-start gap-3">
+<div class="bg-secondary-container p-2 rounded-lg">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex-1">
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider">AI Reconciliation Status</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">3 potential mismatches detected between ERP and Portal records.</p>
+<div class="mt-3 flex gap-2">
+<span class="inline-flex items-center gap-1 bg-error-container text-on-error-container px-2 py-1 rounded-full text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]" data-icon="warning">warning</span> 2 Invoice Deltas
+                        </span>
+<span class="inline-flex items-center gap-1 bg-tertiary-fixed-dim/30 text-on-tertiary-fixed-variant px-2 py-1 rounded-full text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle">check_circle</span> 145 Matches
+                        </span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="chevron_right">chevron_right</span>
+</div>
+</section>
+<!-- Summary Tables -->
+<section class="space-y-4">
+<h2 class="font-headline-sm text-headline-sm text-primary px-1">Filing Summary</h2>
+<!-- B2B Invoices -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-surface-variant">
+<div class="p-4 border-b border-surface-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="business">business</span>
+<span class="font-label-lg text-label-lg text-on-surface">B2B Invoices (4A, 4B)</span>
+</div>
+<span class="bg-surface-container-high px-2 py-0.5 rounded font-label-sm text-label-sm">45 Records</span>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Taxable Amount</span>
+<span class="font-semibold">₹ 12,45,600.00</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Total Tax (IGST+CGST+SGST)</span>
+<span class="font-semibold text-primary">₹ 2,24,208.00</span>
+</div>
+<div class="pt-2 border-t border-surface-variant flex justify-between items-center">
+<span class="text-label-sm text-outline uppercase font-bold tracking-tight">Compliance Status</span>
+<span class="text-label-sm font-bold text-[#008080] bg-[#008080]/10 px-2 py-0.5 rounded">GST COMPLIANT</span>
+</div>
+</div>
+</div>
+<!-- B2C Sales -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-surface-variant">
+<div class="p-4 border-b border-surface-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
+<span class="font-label-lg text-label-lg text-on-surface">B2C Others (7)</span>
+</div>
+<span class="bg-surface-container-high px-2 py-0.5 rounded font-label-sm text-label-sm">122 Records</span>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Taxable Amount</span>
+<span class="font-semibold">₹ 3,12,000.00</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Total Tax</span>
+<span class="font-semibold text-primary">₹ 56,160.00</span>
+</div>
+</div>
+</div>
+<!-- HSN Summary -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-surface-variant">
+<div class="p-4 border-b border-surface-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-lg text-label-lg text-on-surface">HSN Summary (12)</span>
+</div>
+<span class="bg-surface-container-high px-2 py-0.5 rounded font-label-sm text-label-sm">12 Categories</span>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Total Quantity</span>
+<span class="font-semibold">5,420 Units</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Total Value</span>
+<span class="font-semibold text-primary">₹ 15,57,600.00</span>
+</div>
+<div class="mt-2 bg-surface-container p-3 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-600 text-sm" data-icon="info">info</span>
+<p class="text-[11px] text-on-surface-variant italic">HSN-wise summary matches the invoice total tax amount.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Filing Info Card -->
+<div class="p-4 rounded-xl bg-primary-container text-on-primary-container">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<div>
+<p class="font-label-sm text-label-sm uppercase opacity-70">Filing Period</p>
+<p class="font-body-lg text-body-lg font-bold">October 2023</p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-on-primary-container/20 flex justify-between">
+<div>
+<p class="font-label-sm text-label-sm uppercase opacity-70">Due Date</p>
+<p class="font-body-md text-body-md">11 Nov 2023</p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm uppercase opacity-70">Status</p>
+<p class="font-body-md text-body-md text-secondary-fixed-dim">Draft Saved</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Actions Container -->
+<div class="fixed bottom-0 left-0 w-full p-4 bg-surface border-t border-surface-variant z-50 flex gap-3 shadow-lg">
+<button class="flex-1 py-4 border-2 border-primary text-primary font-bold rounded-xl active:scale-95 transition-transform">
+            Save Draft
+        </button>
+<button class="flex-[2] py-4 bg-primary text-on-primary font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2">
+            Verify &amp; Proceed
+            <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.addEventListener('touchstart', function() {
+                    this.classList.add('scale-95');
+                });
+                btn.addEventListener('touchend', function() {
+                    this.classList.remove('scale-95');
+                });
+            });
+
+            // Intersection Observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-4');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('section, .bg-surface-container-lowest').forEach(el => {
+                el.classList.add('transition-all', 'duration-500', 'opacity-0', 'translate-y-4');
+                observer.observe(el);
+            });
+        });
+    </script>
+</body></html>

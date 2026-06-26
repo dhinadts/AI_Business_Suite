@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DHINADTS - Voice Billing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c4c6cf;
+            border-radius: 10px;
+        }
+        .voice-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(253, 139, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(253, 139, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(253, 139, 0, 0); }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary": "#000a1e",
+                    "error-container": "#ffdad6",
+                    "tertiary": "#000d0d",
+                    "surface": "#f8f9fa",
+                    "on-secondary-fixed": "#2f1500",
+                    "tertiary-fixed-dim": "#76d6d5",
+                    "on-secondary-fixed-variant": "#6e3900",
+                    "inverse-surface": "#2e3132",
+                    "secondary-container": "#fd8b00",
+                    "tertiary-container": "#002626",
+                    "outline-variant": "#c4c6cf",
+                    "secondary-fixed-dim": "#ffb77d",
+                    "surface-tint": "#465f88",
+                    "inverse-on-surface": "#f0f1f2",
+                    "background": "#f8f9fa",
+                    "surface-dim": "#d9dadb",
+                    "outline": "#74777f",
+                    "on-secondary-container": "#603100",
+                    "on-background": "#191c1d",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#93f2f2",
+                    "surface-container-high": "#e7e8e9",
+                    "primary-container": "#002147",
+                    "on-primary-fixed-variant": "#2d476f",
+                    "on-error": "#ffffff",
+                    "secondary": "#904d00",
+                    "surface-bright": "#f8f9fa",
+                    "secondary-fixed": "#ffdcc3",
+                    "on-primary-fixed": "#001b3d",
+                    "surface-container-low": "#f3f4f5",
+                    "on-tertiary-container": "#2f9696",
+                    "surface-variant": "#e1e3e4",
+                    "inverse-primary": "#aec7f6",
+                    "surface-container": "#edeeef",
+                    "on-tertiary-fixed-variant": "#004f4f",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#aec7f6",
+                    "on-tertiary-fixed": "#002020",
+                    "on-primary-container": "#708ab5",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface-variant": "#44474e",
+                    "on-surface": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "container-margin": "24px",
+                    "section-gap": "32px",
+                    "gutter": "16px",
+                    "card-padding": "20px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-1px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden">
+<!-- Shell Layout Wrapper -->
+<div class="flex h-screen w-full">
+<!-- Navigation Drawer (Rail View for Tablet/Desktop) -->
+<nav class="fixed left-0 top-0 bottom-0 flex flex-col z-40 bg-surface-container-lowest dark:bg-surface-container-low border-r border-outline-variant w-[280px] hidden md:flex">
+<!-- Header/Profile -->
+<div class="flex flex-col items-start px-6 pt-8 pb-6 gap-2">
+<div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[32px]">hub</span>
+</div>
+<div class="mt-4">
+<h1 class="font-headline-sm text-headline-sm font-black text-primary">DHINADTS ERP</h1>
+<p class="font-label-lg text-label-lg text-on-surface-variant opacity-70 uppercase tracking-widest">Admin Panel</p>
+</div>
+</div>
+<!-- Nav Items -->
+<div class="flex-1 px-3 space-y-1 overflow-y-auto">
+<div class="flex items-center gap-4 px-4 py-3 mx-3 my-1 text-on-surface-variant hover:bg-surface-variant rounded-full transition-all cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</div>
+<div class="flex items-center gap-4 px-4 py-3 mx-3 my-1 text-on-surface-variant hover:bg-surface-variant rounded-full transition-all cursor-pointer">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-lg text-label-lg">Invoices</span>
+</div>
+<div class="flex items-center gap-4 px-4 py-3 mx-3 my-1 text-on-surface-variant hover:bg-surface-variant rounded-full transition-all cursor-pointer">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-lg text-label-lg">Inventory</span>
+</div>
+<div class="flex items-center gap-4 px-4 py-3 mx-3 my-1 text-on-surface-variant hover:bg-surface-variant rounded-full transition-all cursor-pointer">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-lg text-label-lg">GST Reports</span>
+</div>
+<!-- ACTIVE TAB: AI Assistant / Voice -->
+<div class="flex items-center gap-4 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-full mx-3 my-1 scale-[0.98] transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-lg text-label-lg">AI Assistant</span>
+</div>
+<div class="flex items-center gap-4 px-4 py-3 mx-3 my-1 text-on-surface-variant hover:bg-surface-variant rounded-full transition-all cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</div>
+</div>
+<div class="p-6 border-t border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional professional profile picture of a tech-savvy Indian businessman in a formal blazer, set against a blurred modern office background with soft corporate lighting. The style is high-definition, professional, and clean, using a palette of soft grays and deep blues to convey trust and authority in an enterprise software environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEz3ougEL0-GVESbNoWLv5ASsehSQIugxXaAhKKexe6fFieuYSJAswt4U-2UweHmszMukDnaliFixCtOk_y_gzMsKYmZ_cYgJ_L2dOv3QqFC-gbC41BNl3nf3XoeoGkGm_TRCQAwAOIFiMvN5mbeZI-lnTaMirpBWAo54UUNNob41Mn4vbldZHvU9weXlWKNFUHeiFp6mVh5wivJxlKgwJHg5qCLPU6qIO2GywKjAo0kpqVt_2t8mcRSg5uztDpd8Zl-umnRK1KIc"/>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-primary">v2.1 Stable</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-[280px] h-screen overflow-y-auto flex flex-col relative bg-surface">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-30 flex justify-between items-center w-full px-container-margin h-16 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md font-bold tracking-tight text-primary">Voice Billing</h2>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant/50 transition-colors rounded-full">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 text-primary hover:bg-surface-variant/50 transition-colors rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto w-full">
+<!-- Hero Section: Voice Activation -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 bg-primary-container text-on-primary-container rounded-xl p-8 relative overflow-hidden flex flex-col justify-between min-h-[340px]">
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+
+</div>
+<div class="relative z-10">
+<span class="inline-flex items-center gap-2 px-3 py-1 bg-secondary-container/20 text-secondary-fixed-dim rounded-full font-label-lg text-label-lg mb-4">
+<span class="material-symbols-outlined text-[14px]">settings_voice</span>
+                                LIVE AI TRANSCRIPTION
+                            </span>
+<h3 class="font-headline-lg text-headline-lg mb-2 text-white">Faster Billing with Voice</h3>
+<p class="font-body-lg text-body-lg text-primary-fixed/70 max-w-md">Speak naturally to generate invoices, update inventory, or query GST reports. Our Bharat AI understands regional accents and business terminology fluently.</p>
+</div>
+<div class="relative z-10 flex items-center gap-6 mt-8">
+<button class="voice-pulse group flex items-center justify-center gap-3 px-8 py-4 bg-secondary-container hover:bg-secondary-container/90 text-on-secondary-container font-headline-sm text-headline-sm rounded-full transition-all shadow-lg active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">mic</span>
+                                START VOICE BILLING
+                            </button>
+<div class="hidden sm:flex flex-col">
+<span class="font-label-lg text-label-lg text-white/50">Current Language</span>
+<span class="font-body-md text-body-md text-white font-bold">Hinglish / English</span>
+</div>
+</div>
+</div>
+<!-- Voice Command Tips (Bento Style) -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<h4 class="font-label-lg text-label-lg uppercase tracking-widest text-on-surface-variant">Voice Command Tips</h4>
+<span class="material-symbols-outlined text-secondary">lightbulb</span>
+</div>
+<ul class="space-y-4 flex-1">
+<li class="flex gap-3 items-start group cursor-default">
+<div class="p-2 bg-surface rounded-lg text-primary border border-outline-variant group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface italic">"Add 5 units of Steel Rods to Invoice"</p>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Quick Entry</p>
+</div>
+</li>
+<li class="flex gap-3 items-start group cursor-default">
+<div class="p-2 bg-surface rounded-lg text-primary border border-outline-variant group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface italic">"Bill to Sharma Enterprises, Kolkata"</p>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Contact Sync</p>
+</div>
+</li>
+<li class="flex gap-3 items-start group cursor-default">
+<div class="p-2 bg-surface rounded-lg text-primary border border-outline-variant group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface italic">"Apply 10% discount on final total"</p>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Calculations</p>
+</div>
+</li>
+</ul>
+<button class="mt-4 w-full py-2 font-label-lg text-label-lg text-primary border border-primary/20 rounded-lg hover:bg-surface-variant/50 transition-colors">
+                            View All Commands
+                        </button>
+</div>
+</section>
+<!-- Recent Voice Invoices - Side-by-Side View -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary">Recent Voice Invoices</h3>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant rounded-full text-on-surface-variant hover:bg-surface-variant"><span class="material-symbols-outlined">filter_list</span></button>
+<button class="px-4 py-2 bg-surface-container text-primary font-label-lg text-label-lg rounded-lg border border-outline-variant">View All</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Invoice Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-primary">INV-8829-01</h4>
+<p class="text-[11px] text-on-surface-variant">Created via Voice • 2 mins ago</p>
+</div>
+</div>
+<span class="px-2 py-1 bg-tertiary/10 text-on-tertiary-container rounded font-label-lg text-[10px] uppercase">GST Compliant</span>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-on-surface-variant">
+<span class="font-body-md text-body-md">Customer</span>
+<span class="font-body-md text-body-md text-primary font-bold">Arjun Logistics Ltd.</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span class="font-body-md text-body-md">Items</span>
+<span class="font-body-md text-body-md text-primary">12 SKU's Recorded</span>
+</div>
+<div class="h-[1px] bg-outline-variant/30 w-full"></div>
+<div class="flex justify-between">
+<span class="font-body-md text-body-md font-bold text-primary">Grand Total</span>
+<span class="font-headline-sm text-headline-sm text-primary font-black">₹48,250.00</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 py-2 rounded-lg bg-primary text-white font-label-lg text-label-lg hover:opacity-90 transition-all">Review &amp; Send</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-variant">
+<span class="material-symbols-outlined text-[18px]">print</span>
+</button>
+</div>
+</div>
+<!-- Invoice Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-primary">INV-8829-02</h4>
+<p class="text-[11px] text-on-surface-variant">Created via Voice • 1 hour ago</p>
+</div>
+</div>
+<span class="px-2 py-1 bg-secondary/10 text-on-secondary-container rounded font-label-lg text-[10px] uppercase">Draft Mode</span>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between text-on-surface-variant">
+<span class="font-body-md text-body-md">Customer</span>
+<span class="font-body-md text-body-md text-primary font-bold">Patel Groceries</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span class="font-body-md text-body-md">Items</span>
+<span class="font-body-md text-body-md text-primary">4 SKU's Recorded</span>
+</div>
+<div class="h-[1px] bg-outline-variant/30 w-full"></div>
+<div class="flex justify-between">
+<span class="font-body-md text-body-md font-bold text-primary">Grand Total</span>
+<span class="font-headline-sm text-headline-sm text-primary font-black">₹3,420.00</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 py-2 rounded-lg bg-primary text-white font-label-lg text-label-lg hover:opacity-90 transition-all">Review &amp; Send</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-variant">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Activity Heatmap / Assistant Visualization -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-surface-container-highest border border-outline-variant rounded-xl overflow-hidden p-6 flex flex-col min-h-[300px]">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-headline-sm text-headline-sm text-primary">Voice Activity</h4>
+<div class="flex gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary-container"></span>
+<span class="w-3 h-3 rounded-full bg-primary-container opacity-30"></span>
+</div>
+</div>
+<div class="flex-1 flex items-end gap-1 px-2 h-40">
+<!-- Simple Bar Chart -->
+<div class="flex-1 bg-secondary-container rounded-t h-[30%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[45%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[20%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[60%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[85%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[40%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[70%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[95%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[55%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[40%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[65%]"></div>
+<div class="flex-1 bg-secondary-container rounded-t h-[80%]"></div>
+</div>
+<div class="flex justify-between mt-4 font-label-lg text-label-lg text-on-surface-variant">
+<span>08:00 AM</span>
+<span>Voice Usage Peak (Current)</span>
+<span>08:00 PM</span>
+</div>
+</div>
+<div class="relative rounded-xl overflow-hidden min-h-[300px] group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A futuristic, high-tech command center interface showing real-time voice analytics and spectral frequency visualizations. The scene is bathed in a sophisticated lighting scheme of deep navy and vibrant orange, reflecting the Bharat AI corporate identity. Digital data streams and floating UI elements create a sense of advanced intelligence and operational stability in a premium SaaS environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg1-Z5yj63bTaYm3qi2mtMx2AYT-Knpc2irtzz1j6gnLfzn7MwBAbARbKj5S8OB1YvW1omxsA1FqOKk3oUjr1zlOpOXo1i8owL2opDj8l7s5vc_8YtyWGOfbxjISnrgcpp7V_n8Ii0YtjE0wKILxldGo3DeP1FS6lEBaP2jSoi51Ab0qSQCsi9pkTsbu8i81qX6prwlAdZZPxjh30x-xwanlGf8aMVfHYR6LsVVeGIzivPaQ9cFoCGVghyGOg0NQUsi-ym99z0tHY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent p-8 flex flex-col justify-end">
+<h4 class="font-headline-sm text-headline-sm text-white">Live Data Feed</h4>
+<p class="text-white/70 font-body-md text-body-md mt-2">AI is monitoring your voice commands for accuracy and compliance.</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Contextual FAB (Mobile/Tablet Only) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-secondary-container text-on-secondary-container rounded-2xl shadow-xl flex items-center justify-center lg:hidden z-50 voice-pulse">
+<span class="material-symbols-outlined text-[32px]">mic</span>
+</button>
+<!-- Bottom Nav Bar (Mobile View) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-2 pb-safe bg-surface border-t border-outline-variant lg:hidden shadow-[0_-2px_8px_rgba(0,10,30,0.04)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Sales</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1 scale-90">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings_voice</span>
+<span class="font-label-sm text-label-sm">AI Scan</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="font-label-sm text-label-sm">Menu</span>
+</div>
+</nav>
+</main>
+</div>
+<script>
+        // Micro-interactions and voice feedback simulation
+        const voiceBtn = document.querySelector('.voice-pulse');
+        if(voiceBtn) {
+            voiceBtn.addEventListener('click', () => {
+                voiceBtn.classList.add('bg-secondary');
+                setTimeout(() => {
+                    alert('Bharat AI is listening... Speak your command clearly.');
+                    voiceBtn.classList.remove('bg-secondary');
+                }, 400);
+            });
+        }
+
+        // Active state hover effects for nav drawer
+        document.querySelectorAll('nav div.flex').forEach(item => {
+            item.addEventListener('mousedown', () => {
+                if(!item.classList.contains('bg-secondary-container')) {
+                    item.classList.add('scale-95');
+                }
+            });
+            item.addEventListener('mouseup', () => {
+                item.classList.remove('scale-95');
+            });
+        });
+    </script>
+</body></html>

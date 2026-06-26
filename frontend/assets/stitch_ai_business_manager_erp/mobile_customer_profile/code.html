@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Profile - Sharma Electronics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#603100",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2e3132",
+                    "surface": "#f8f9fa",
+                    "on-surface": "#191c1d",
+                    "surface-tint": "#465f88",
+                    "secondary-fixed-dim": "#ffb77d",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#002626",
+                    "surface-dim": "#d9dadb",
+                    "on-secondary-fixed-variant": "#6e3900",
+                    "outline": "#74777f",
+                    "on-tertiary-container": "#2f9696",
+                    "error": "#ba1a1a",
+                    "primary": "#000a1e",
+                    "on-background": "#191c1d",
+                    "on-primary-fixed": "#001b3d",
+                    "tertiary-fixed": "#93f2f2",
+                    "surface-container-high": "#e7e8e9",
+                    "tertiary-fixed-dim": "#76d6d5",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ffdcc3",
+                    "on-primary-container": "#708ab5",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#aec7f6",
+                    "on-tertiary-fixed-variant": "#004f4f",
+                    "surface-bright": "#f8f9fa",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#2f1500",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-variant": "#e1e3e4",
+                    "secondary": "#904d00",
+                    "primary-container": "#002147",
+                    "primary-fixed": "#d6e3ff",
+                    "tertiary": "#000d0d",
+                    "secondary-container": "#fd8b00",
+                    "on-primary-fixed-variant": "#2d476f",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-tertiary-fixed": "#002020",
+                    "background": "#f8f9fa",
+                    "surface-container": "#edeeef",
+                    "on-surface-variant": "#44474e",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#aec7f6",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f3f4f5",
+                    "outline-variant": "#c4c6cf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "24px",
+                    "card-padding": "20px",
+                    "base": "8px",
+                    "section-gap": "32px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "label-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-1px", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .ai-glow {
+            box-shadow: 0 0 15px rgba(253, 139, 0, 0.15);
+            border: 1px solid rgba(253, 139, 0, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c4c6cf; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- NavigationDrawer (Desktop Only) -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col z-40 bg-surface-container-lowest border-r border-outline-variant w-[280px] hidden lg:flex shadow-sm">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-black text-primary">DHINADTS ERP</h2>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Admin Panel • v2.1</p>
+</div>
+</div>
+<nav class="mt-4 flex-1">
+<a class="flex items-center gap-3 mx-3 my-1 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-full mx-3 my-1 px-4 py-3 scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-label-lg text-label-lg font-bold">Invoices</span>
+</a>
+<a class="flex items-center gap-3 mx-3 my-1 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-lg text-label-lg">Inventory</span>
+</a>
+<a class="flex items-center gap-3 mx-3 my-1 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-lg text-label-lg">GST Reports</span>
+</a>
+<a class="flex items-center gap-3 mx-3 my-1 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-lg text-label-lg">AI Assistant</span>
+</a>
+<a class="flex items-center gap-3 mx-3 my-1 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-outline-variant">
+<div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional corporate portrait of an Indian administrator in a modern office environment, wearing business casual attire, soft natural lighting, high-end professional photography style, shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB15ShZs7aufiO7JCe1B5O4z4-MHApCGJJSnoR1-H1BOumetAR-8oOZHyFcKsXGri2ZUo9MxN_MOv-k1A8e7MTjEL0xMNlya9b3nJRCYj-u7HvSzoxTopWd7U8g12UA4mvBQAJW84CwdbGcijXrV26bE89X-avgkwa6BA-nA8lZqXT4U_0iypluv60dYbZagQG748ed4UxrO6_Bj-cBCZCkvBBKPMUyxsicE2hhx7F2JQLkBB8HeW9FfKXaechwF4KIdc_Xh8VYP04"/>
+<div class="overflow-hidden">
+<p class="font-label-lg text-label-lg text-primary truncate">Rohan Sharma</p>
+<p class="text-[10px] text-on-surface-variant">Super Admin</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-on-surface-variant">logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-[280px] pb-24 lg:pb-8 flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-30 bg-surface border-b border-outline-variant flex justify-between items-center w-full px-container-margin h-16">
+<div class="flex items-center gap-4">
+<button class="lg:hidden p-2 hover:bg-surface-variant/50 transition-colors rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight text-primary">Sharma Electronics</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-variant/50 transition-colors rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="p-2 hover:bg-surface-variant/50 transition-colors rounded-full">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Profile Header Section -->
+<section class="px-container-margin py-8 bg-surface-container-low">
+<div class="flex flex-col md:flex-row gap-8 items-start md:items-center">
+<!-- Avatar -->
+<div class="relative">
+<div class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-surface shadow-md overflow-hidden bg-primary-container flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A macro close-up of a circular company logo for an electronics business, featuring modern tech motifs and elegant typography, set against a premium dark navy background with subtle light reflecting off the surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5aRP2pyeInPxS6OpyWaQGiWrU-GV-cmnufuCz1bCjddN8TwKLyheYsyC15EU6b8WcUS58OSb7J4FcZSIaMrQzvD5ultjcyhQNjzFx-P_WHadCeZcF_hkbMjJejxIvbJTpfdKnlOkixAZmN6XWxllOVwJETRtipBnq_O97X8O8-J8swmhTlIXEivb2zoURqUoRyOiyEAuwas5nLmsKKhYNYc_myC2FQ1m9kMOh-aKrHtKJEVUJoWyuKAv8eV_Te5XHae75cB-lKIY"/>
+</div>
+<div class="absolute bottom-1 right-1 w-8 h-8 bg-tertiary-fixed rounded-full flex items-center justify-center border-2 border-surface shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-on-tertiary-fixed">verified</span>
+</div>
+</div>
+<!-- Info -->
+<div class="flex-1">
+<div class="flex flex-wrap items-center gap-3 mb-2">
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary">Sharma Electronics</h2>
+<span class="px-3 py-1 bg-tertiary-container/10 text-on-tertiary-container rounded-full font-label-lg text-label-lg border border-tertiary-container/20">GST Compliant</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-8 text-on-surface-variant font-body-md text-body-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">badge</span>
+<span class="font-medium">GSTIN: 07AABC9876F1Z5</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">call</span>
+<span>+91 98765 43210</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+<span>Sector 18, Noida, Uttar Pradesh</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">mail</span>
+<span>contact@sharmaelectronics.com</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons Cluster -->
+<div class="flex flex-wrap gap-3 w-full md:w-auto mt-4 md:mt-0">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-label-lg text-label-lg hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        New Invoice
+                    </button>
+<div class="flex gap-2 w-full md:w-auto">
+<button class="flex-1 md:w-12 h-12 flex items-center justify-center border-1.5 border-outline-variant bg-surface rounded-xl hover:bg-surface-variant/30 transition-colors">
+<span class="material-symbols-outlined text-primary">call</span>
+</button>
+<button class="flex-1 md:w-12 h-12 flex items-center justify-center border-1.5 border-outline-variant bg-surface rounded-xl hover:bg-surface-variant/30 transition-colors">
+<span class="material-symbols-outlined text-[#25D366]">chat</span>
+</button>
+<button class="flex-1 md:w-12 h-12 flex items-center justify-center border-1.5 border-outline-variant bg-surface rounded-xl hover:bg-surface-variant/30 transition-colors">
+<span class="material-symbols-outlined text-primary">alternate_email</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Tab Interface -->
+<nav class="px-container-margin border-b border-outline-variant bg-surface flex items-center gap-8 overflow-x-auto no-scrollbar">
+<button class="py-4 border-b-2 border-secondary text-primary font-bold font-label-lg text-label-lg whitespace-nowrap">Overview</button>
+<button class="py-4 border-b-2 border-transparent text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors whitespace-nowrap">Invoices</button>
+<button class="py-4 border-b-2 border-transparent text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors whitespace-nowrap">Ledger</button>
+<button class="py-4 border-b-2 border-transparent text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors whitespace-nowrap">Inventory History</button>
+</nav>
+<section class="p-container-margin space-y-section-gap">
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest p-card-padding rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider mb-2">Total Outstanding</p>
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md font-extrabold text-primary">₹45,200</h3>
+<div class="w-10 h-10 rounded-full bg-error-container/20 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+</div>
+</div>
+<p class="mt-2 text-error font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                        Overdue by 5 days
+                    </p>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider mb-2">Last Transaction</p>
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md font-extrabold text-primary">12 Oct</h3>
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</div>
+</div>
+<p class="mt-2 text-on-surface-variant font-label-sm text-label-sm">Amount: ₹12,450</p>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider mb-2">Credit Limit</p>
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md font-extrabold text-primary">₹2.0L</h3>
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed-dim/20 flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-[20px]">credit_score</span>
+</div>
+</div>
+<div class="mt-3 h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-[22.6%]"></div>
+</div>
+<p class="mt-2 text-on-surface-variant font-label-sm text-label-sm">22.6% utilized</p>
+</div>
+</div>
+<!-- AI Insights Card -->
+<div class="ai-glow bg-primary-container/5 rounded-2xl p-6 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[80px] text-secondary">smart_toy</span>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container text-[18px]">auto_awesome</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-primary">AI Insights</h4>
+</div>
+<div class="max-w-2xl space-y-4">
+<p class="text-on-surface-variant font-body-lg text-body-lg leading-relaxed">
+                        This customer typically <span class="text-secondary font-bold">pays 3 days before</span> the due date. They show a high potential for upselling <span class="text-primary font-bold underline decoration-secondary/30">premium inventory</span> based on their Q3 purchasing patterns.
+                    </p>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-white border border-outline-variant rounded-full text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            Growth Score: 94/100
+                        </span>
+<span class="px-3 py-1 bg-white border border-outline-variant rounded-full text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+                            Low Risk
+                        </span>
+</div>
+</div>
+</div>
+<!-- Recent Invoices Table -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="p-card-padding flex justify-between items-center border-b border-outline-variant">
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary">Recent Invoices</h3>
+<button class="text-secondary font-bold font-label-lg text-label-lg flex items-center gap-1 hover:underline">
+                        View All
+                        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Invoice No.</th>
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Date</th>
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Items</th>
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Amount</th>
+<th class="px-6 py-4 font-semibold uppercase tracking-wider text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-variant/30 transition-colors group cursor-pointer">
+<td class="px-6 py-4 font-bold text-primary font-body-md text-body-md">#INV-2023-892</td>
+<td class="px-6 py-4 text-on-surface-variant font-body-md text-body-md">12 Oct, 2023</td>
+<td class="px-6 py-4 text-on-surface-variant font-body-md text-body-md">LED TV x 4, Home Theatre...</td>
+<td class="px-6 py-4 text-primary font-bold font-body-md text-body-md">₹12,450</td>
+<td class="px-6 py-4 text-right">
+<span class="px-3 py-1 bg-tertiary-container/10 text-on-tertiary-container rounded-full font-label-sm text-label-sm">Paid</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors group cursor-pointer">
+<td class="px-6 py-4 font-bold text-primary font-body-md text-body-md">#INV-2023-875</td>
+<td class="px-6 py-4 text-on-surface-variant font-body-md text-body-md">05 Oct, 2023</td>
+<td class="px-6 py-4 text-on-surface-variant font-body-md text-body-md">Split AC 1.5T x 2</td>
+<td class="px-6 py-4 text-primary font-bold font-body-md text-body-md">₹82,000</td>
+<td class="px-6 py-4 text-right">
+<span class="px-3 py-1 bg-secondary-container/10 text-on-secondary-container rounded-full font-label-sm text-label-sm">Partial</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors group cursor-pointer">
+<td class="px-6 py-4 font-bold text-primary font-body-md text-body-md">#INV-2023-861</td>
+<td class="px-6 py-4 text-on-surface-variant font-body-md text-body-md">28 Sep, 2023</td>
+<td class="px-6 py-4 text-on-surface-variant font-body-md text-body-md">Smartphone K30 x 10</td>
+<td class="px-6 py-4 text-primary font-bold font-body-md text-body-md">₹1,50,000</td>
+<td class="px-6 py-4 text-right">
+<span class="px-3 py-1 bg-error-container/10 text-on-error-container rounded-full font-label-sm text-label-sm">Overdue</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-2 pb-safe bg-surface border-t border-outline-variant shadow-[0_-2px_8px_rgba(0,10,30,0.04)] lg:hidden rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/30 px-5 py-1 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1 scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label-sm text-label-sm">Sales</span>
+</a>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/30 px-5 py-1 rounded-full">
+<span class="material-symbols-outlined">settings_voice</span>
+<span class="font-label-sm text-label-sm">AI Scan</span>
+</button>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/30 px-5 py-1 rounded-full" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm">Reports</span>
+</a>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant/30 px-5 py-1 rounded-full">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="font-label-sm text-label-sm">Menu</span>
+</button>
+</nav>
+<!-- Floating Action Button for AI (Optional Contextual Enhancement) -->
+<button class="fixed bottom-24 right-6 lg:bottom-8 lg:right-8 w-14 h-14 bg-secondary-container text-on-secondary-container rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-all z-40 group overflow-hidden">
+<span class="material-symbols-outlined text-[28px] group-hover:rotate-12 transition-transform">auto_awesome</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</button>
+<script>
+        // Micro-interaction for tabs
+        document.querySelectorAll('nav button').forEach(button => {
+            button.addEventListener('click', () => {
+                const nav = button.parentElement;
+                nav.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('border-secondary', 'text-primary', 'font-bold');
+                    b.classList.add('border-transparent', 'text-on-surface-variant');
+                });
+                button.classList.add('border-secondary', 'text-primary', 'font-bold');
+                button.classList.remove('border-transparent', 'text-on-surface-variant');
+            });
+        });
+
+        // Simple smooth scroll for desktop nav
+        document.querySelectorAll('aside nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const text = link.querySelector('span:not(.material-symbols-outlined)').innerText;
+                if(text !== 'Invoices') {
+                    // Logic for actual navigation would go here
+                }
+            });
+        });
+    </script>
+</body></html>

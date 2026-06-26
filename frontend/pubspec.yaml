@@ -1,0 +1,59 @@
+name: ai_business_manager
+description: "Responsive UI prototype for AI Business Suite by DHINADTS."
+publish_to: 'none' 
+version: 1.0.0+1
+environment:
+  sdk: ^3.12.0
+dependencies:
+  flutter:
+    sdk: flutter  
+  flutter_web_plugins:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  fl_chart: ^1.2.0
+  flutter_riverpod: ^3.3.2
+  go_router: ^17.3.0
+  intl: ^0.20.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+flutter:  
+  uses-material-design: true
+  assets:
+    - assets/stitch_ai_business_manager_erp/
+    - assets/stitch_ai_business_manager_erp/logo.png/screen.png
+    - assets/stitch_ai_business_manager_erp/chatgpt_image_jun_14_2026_04_56_46_pm.png/screen.png
+    - assets/stitch_ai_business_manager_erp/chatgpt_image_jun_14_2026_05_01_10_pm.png/screen.png
+
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

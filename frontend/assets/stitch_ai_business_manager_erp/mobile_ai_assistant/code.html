@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DHINADTS - AI Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .ai-gradient-border {
+            position: relative;
+            background: #ffffff;
+            border-radius: 16px;
+        }
+        .ai-gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: 17px;
+            padding: 1px;
+            background: linear-gradient(135deg, #fd8b00, #002147, #2f9696);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .chat-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background: #c4c6cf;
+            border-radius: 10px;
+        }
+        @keyframes subtle-pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-ai-glow {
+            animation: subtle-pulse 3s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#e1e3e4",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#004f4f",
+                      "surface": "#f8f9fa",
+                      "surface-container-highest": "#e1e3e4",
+                      "surface-container-lowest": "#ffffff",
+                      "outline": "#74777f",
+                      "on-surface-variant": "#44474e",
+                      "tertiary-container": "#002626",
+                      "on-background": "#191c1d",
+                      "on-secondary-fixed-variant": "#6e3900",
+                      "on-tertiary-fixed": "#002020",
+                      "secondary-fixed-dim": "#ffb77d",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "inverse-surface": "#2e3132",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#aec7f6",
+                      "surface-bright": "#f8f9fa",
+                      "surface-container-low": "#f3f4f5",
+                      "on-primary-fixed": "#001b3d",
+                      "on-secondary-container": "#603100",
+                      "secondary-fixed": "#ffdcc3",
+                      "primary": "#000a1e",
+                      "secondary-container": "#fd8b00",
+                      "surface-tint": "#465f88",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#aec7f6",
+                      "primary-container": "#002147",
+                      "surface-container-high": "#e7e8e9",
+                      "primary-fixed": "#d6e3ff",
+                      "secondary": "#904d00",
+                      "on-error": "#ffffff",
+                      "surface-dim": "#d9dadb",
+                      "tertiary-fixed-dim": "#76d6d5",
+                      "on-primary-container": "#708ab5",
+                      "tertiary-fixed": "#93f2f2",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-tertiary-container": "#2f9696",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#2f1500",
+                      "tertiary": "#000d0d",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c4c6cf",
+                      "error": "#ba1a1a",
+                      "background": "#f8f9fa",
+                      "surface-container": "#edeeef",
+                      "on-surface": "#191c1d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "section-gap": "32px",
+                      "card-padding": "20px",
+                      "container-margin": "24px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "headline-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-1px", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden">
+<!-- Top AppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 h-16 bg-surface dark:bg-surface-container-low border-b border-outline-variant dark:border-outline flex justify-between items-center px-container-margin">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined p-2 hover:bg-surface-variant/50 transition-colors rounded-full text-on-surface">menu</button>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight text-primary dark:text-primary-fixed">DHINADTS</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="material-symbols-outlined p-2 hover:bg-surface-variant/50 transition-colors rounded-full text-on-surface">notifications</button>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of an Indian male executive in a sharp navy blue business suit, clean shaven with a friendly smile, set against a blurred modern office background with soft corporate lighting. The overall aesthetic is premium, stable, and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrI8RukIlpMfhMcPsRntjHmEvwaJ0k-bELHSqGrxyBludyic5pBILnJhTv20HH1PcqvViz7Ax6xGJUjpzChORvkGed31EFQXvpTmV1ty7D_ZZyfgw2XeTatr0neidEdifirZpZERpNeXPI0oX2r7VMksVv-1wdHWSAfAW-Mdd2olz9pa9eenugrKtdyqZ7v-2SY2nZ7VVxZquvBqJqWZTeug_-KSR3GUcob4tZZc7iSzgTxglWpJisV_SCpVZMsVC6t8snzPaAvOE"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Drawer (Desktop) -->
+<aside class="fixed left-0 top-0 bottom-0 w-[280px] hidden lg:flex flex-col bg-surface-container-lowest dark:bg-surface-container-low border-r border-outline-variant z-40">
+<div class="h-16 flex items-center px-6 mb-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-black text-primary dark:text-primary-fixed">DHINADTS ERP</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Admin Panel</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-all group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-all" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-lg text-label-lg">Invoices</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-lg text-label-lg">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-all" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-lg text-label-lg">GST Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container dark:bg-secondary dark:text-on-secondary rounded-full mx-3 my-1 scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-lg text-label-lg font-bold">AI Assistant</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+<div class="p-6 border-t border-outline-variant">
+<div class="bg-primary-container/10 p-4 rounded-xl border border-primary-container/20">
+<p class="font-label-sm text-primary mb-1">System Health</p>
+<div class="h-1 w-full bg-outline-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-[92%]"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant mt-2">v2.1 Stable</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-[280px] pt-16 pb-20 lg:pb-0 h-screen flex flex-col relative overflow-hidden">
+<!-- Subtle AI Background Layer -->
+<div class="absolute inset-0 z-0 opacity-40 pointer-events-none">
+
+</div>
+<!-- Chat Header -->
+<section class="relative z-10 px-container-margin py-6 border-b border-outline-variant glass-panel">
+<div class="flex items-center justify-between max-w-4xl mx-auto">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg border border-primary-container/30">
+<span class="material-symbols-outlined text-secondary-container text-3xl animate-ai-glow" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">DHINADTS AI</h2>
+<p class="text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-green-500"></span> Online &amp; Analyzing Business Data
+                        </p>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-variant/30 rounded-full">history</button>
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-variant/30 rounded-full">more_vert</button>
+</div>
+</div>
+</section>
+<!-- Messages Container -->
+<section class="flex-1 overflow-y-auto chat-scroll px-container-margin py-8 relative z-10">
+<div class="max-w-4xl mx-auto space-y-8">
+<!-- AI Message -->
+<div class="flex gap-4 items-start max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-primary shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container text-lg" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container-highest dark:bg-surface-container-high p-4 rounded-2xl rounded-tl-none shadow-sm text-on-surface">
+<p>Good morning, Administrator. I've finished scanning your latest sales data from yesterday. Your revenue was up by 12% compared to last Wednesday. How can I help you navigate your enterprise today?</p>
+</div>
+<!-- Suggestion Chips -->
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface border border-outline-variant rounded-full text-label-lg font-label-lg hover:bg-primary hover:text-on-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">analytics</span>
+                                Sales Report
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface border border-outline-variant rounded-full text-label-lg font-label-lg hover:bg-primary hover:text-on-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">description</span>
+                                GST Summary
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface border border-outline-variant rounded-full text-label-lg font-label-lg hover:bg-primary hover:text-on-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">event_repeat</span>
+                                Next Due Date
+                            </button>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex gap-4 items-start justify-end max-w-[85%] ml-auto">
+<div class="bg-primary text-on-primary p-4 rounded-2xl rounded-tr-none shadow-md">
+<p>What's my top-selling product this month?</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary-container shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of an Indian male executive in a sharp navy blue business suit, clean shaven with a friendly smile, set against a blurred modern office background with soft corporate lighting. The overall aesthetic is premium, stable, and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9lEJVEclQSF5IHa7ZqM7VrFktmw9joS0IIDri4hepbVaG2IvQOaJa6TdHVk7sbZ1jGr1_eTS8OcVbce_Xyl8A0mKFOkbmkCxlIdKMOt6HrLzxToincvE-I5FgIPbpI0EpF70UGguKOkFxoEnzRE23rraebqCVUools5Xm62B_ohFPnGCJa_nMi7N9yRnjAyfE_lZBwd7Od9DVVCuPOmwagFeVzn7CJZggpDCmPNmrPQAhG84_H_9neOgfZc80ap5diMY6ZD9H8y4"/>
+</div>
+</div>
+<!-- AI Data Insights Message -->
+<div class="flex gap-4 items-start max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-primary shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container text-lg" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="w-full space-y-4">
+<div class="bg-surface-container-highest dark:bg-surface-container-high p-4 rounded-2xl rounded-tl-none shadow-sm text-on-surface">
+<p class="mb-4">For the month of October, your top-performing product remains the <span class="font-bold text-primary">Ultra-Industrial Compressor v4</span>.</p>
+<!-- Insight Card -->
+<div class="ai-gradient-border p-4 bg-surface-container-lowest">
+<div class="flex justify-between items-center mb-3">
+<h4 class="font-label-lg text-primary uppercase tracking-tight">Sales Breakdown</h4>
+<span class="text-[10px] bg-secondary-container/20 text-secondary-container px-2 py-0.5 rounded-full font-bold">LIVE DATA</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="border-r border-outline-variant/30 pr-4">
+<p class="text-[10px] text-on-surface-variant uppercase">Units Sold</p>
+<p class="text-xl font-bold text-primary">1,284</p>
+<p class="text-[10px] text-green-600 font-bold flex items-center">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> +8.4%
+                                        </p>
+</div>
+<div class="pl-2">
+<p class="text-[10px] text-on-surface-variant uppercase">Total Revenue</p>
+<p class="text-xl font-bold text-primary">₹4.2M</p>
+<p class="text-[10px] text-primary-container font-bold">24% of total sales</p>
+</div>
+</div>
+</div>
+</div>
+<p class="text-label-sm text-on-surface-variant italic px-2">Generated in 1.4s using current ledger state.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Input Section -->
+<section class="relative z-20 px-container-margin pb-8 pt-4 glass-panel">
+<div class="max-w-4xl mx-auto">
+<div class="flex items-end gap-2 p-1 bg-surface-container border border-outline-variant rounded-[24px] shadow-lg focus-within:ring-2 focus-within:ring-primary transition-all">
+<button class="material-symbols-outlined p-3 text-on-surface-variant hover:text-primary transition-colors">attach_file</button>
+<textarea class="flex-1 bg-transparent border-none focus:ring-0 py-3 px-2 resize-none max-h-32 min-h-[48px] placeholder:text-on-surface-variant/60 font-body-md" placeholder="Ask your enterprise assistant..." rows="1"></textarea>
+<div class="flex items-center gap-1 pr-2 pb-1.5">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" title="Voice Scan">settings_voice</button>
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" title="Camera OCR">camera_alt</button>
+<button class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+<div class="mt-3 flex justify-center gap-6 text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-1 opacity-70"><span class="material-symbols-outlined text-[14px]">lock</span> GST Compliant &amp; Secure</span>
+<span class="flex items-center gap-1 opacity-70"><span class="material-symbols-outlined text-[14px]">bolt</span> Real-time Analysis</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-2 pb-safe bg-surface dark:bg-surface-container-highest border-t border-outline-variant shadow-[0_-2px_8px_rgba(0,10,30,0.04)] rounded-t-xl lg:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4" href="#">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="font-label-sm text-label-sm mt-1">Sales</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-full px-5 py-2 scale-110 -translate-y-2 shadow-lg" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-sm text-label-sm mt-0.5">AI</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4" href="#">
+<span class="material-symbols-outlined text-2xl">description</span>
+<span class="font-label-sm text-label-sm mt-1">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-4" href="#">
+<span class="material-symbols-outlined text-2xl">more_horiz</span>
+<span class="font-label-sm text-label-sm mt-1">Menu</span>
+</a>
+</nav>
+<script>
+        // Simple textarea auto-resize
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+        }
+    </script>
+</body></html>

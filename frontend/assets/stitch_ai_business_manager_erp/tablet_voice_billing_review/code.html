@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Voice Billing Review - DHINADTS ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ai-glow {
+            box-shadow: 0 0 15px rgba(253, 139, 0, 0.15);
+            border: 1px solid rgba(253, 139, 0, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e1e3e4; border-radius: 10px; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary": "#000a1e",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#000d0d",
+                        "surface": "#f8f9fa",
+                        "on-secondary-fixed": "#2f1500",
+                        "tertiary-fixed-dim": "#76d6d5",
+                        "on-secondary-fixed-variant": "#6e3900",
+                        "inverse-surface": "#2e3132",
+                        "secondary-container": "#fd8b00",
+                        "tertiary-container": "#002626",
+                        "outline-variant": "#c4c6cf",
+                        "secondary-fixed-dim": "#ffb77d",
+                        "surface-tint": "#465f88",
+                        "inverse-on-surface": "#f0f1f2",
+                        "background": "#f8f9fa",
+                        "surface-dim": "#d9dadb",
+                        "outline": "#74777f",
+                        "on-secondary-container": "#603100",
+                        "on-background": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#93f2f2",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-container": "#002147",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-error": "#ffffff",
+                        "secondary": "#904d00",
+                        "surface-bright": "#f8f9fa",
+                        "secondary-fixed": "#ffdcc3",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary-container": "#2f9696",
+                        "surface-variant": "#e1e3e4",
+                        "inverse-primary": "#aec7f6",
+                        "surface-container": "#edeeef",
+                        "on-tertiary-fixed-variant": "#004f4f",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#aec7f6",
+                        "on-tertiary-fixed": "#002020",
+                        "on-primary-container": "#708ab5",
+                        "primary-fixed": "#d6e3ff",
+                        "on-surface-variant": "#44474e",
+                        "on-surface": "#191c1d"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "container-margin": "24px",
+                        "section-gap": "32px",
+                        "gutter": "16px",
+                        "card-padding": "20px"
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex overflow-hidden">
+<!-- Navigation Drawer (Rail for Tablet View) -->
+<!-- Applying Shared Component Logic for NavigationDrawer -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col z-40 bg-surface-container-lowest border-r border-outline-variant w-20 lg:w-[280px] transition-all duration-300">
+<div class="flex items-center justify-center lg:justify-start h-16 px-4 lg:px-6 mb-4">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">data_exploration</span>
+</div>
+<span class="ml-3 hidden lg:block font-headline-sm text-headline-sm font-black text-primary">DHINADTS ERP</span>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Dashboard (Inactive) -->
+<div class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start p-3 cursor-pointer group transition-transform duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="ml-3 hidden lg:block font-label-lg text-label-lg">Dashboard</span>
+</div>
+<!-- Invoices (Active for Reviewing/Billing Context) -->
+<div class="bg-secondary-container text-on-secondary-container rounded-full mx-3 my-1 flex items-center justify-center lg:justify-start p-3 cursor-pointer group transition-transform duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="receipt_long" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="ml-3 hidden lg:block font-label-lg text-label-lg font-bold">Invoices</span>
+</div>
+<!-- Inventory (Inactive) -->
+<div class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start p-3 cursor-pointer group transition-transform duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="ml-3 hidden lg:block font-label-lg text-label-lg">Inventory</span>
+</div>
+<!-- AI Assistant (Inactive) -->
+<div class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start p-3 cursor-pointer group transition-transform duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+<span class="ml-3 hidden lg:block font-label-lg text-label-lg">AI Assistant</span>
+</div>
+</nav>
+<div class="p-4 border-t border-outline-variant flex items-center justify-center lg:justify-start">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="A professional corporate portrait of a male Indian business administrator in a crisp white shirt, clean lighting, blurred office background, modern professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3T2DcDoWzid7WPzTyx7FcWmVxsyEIWW56ybx2dkLfFHCHf5A6-hMoJN9ejs1tNVCF91bX3sX2V2KQTMrSo7albipQRgLHeJyNVnlYOrOqA_OJ29y70RVpfDWlt80ROSy6vYwxBm90B1a2PzYoIWksTXR63sdz6HUbJW0BCbwor2ZTpqzeX9hfdy4F6fAcWJLb1j7Zu-0hm0fGAP6t4GoRATjMdS5Inu8oh4JEbqT4jv_ZVHGxP8goFSWCTTVU7Oo0nEkkucCuTUM"/>
+</div>
+<div class="ml-3 hidden lg:block">
+<p class="font-label-lg text-label-lg text-primary">Admin Panel</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">v2.1</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-20 lg:ml-[280px] flex flex-col h-screen relative">
+<!-- Top App Bar -->
+<header class="h-16 px-container-margin flex items-center justify-between bg-surface border-b border-outline-variant z-30">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors">menu</button>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight text-primary">DHINADTS</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full text-on-surface-variant border border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+<span class="font-label-lg text-label-lg">Voice Session Active: 04:22</span>
+</div>
+<button class="material-symbols-outlined text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors">notifications</button>
+</div>
+</header>
+<!-- Content Area: Split Layout -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left: Detailed List of Extracted Items -->
+<section class="flex-1 overflow-y-auto p-container-margin custom-scrollbar">
+<!-- AI Confidence Indicator -->
+<div class="ai-glow bg-surface-container-lowest rounded-xl p-4 mb-6 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="relative flex items-center justify-center">
+<svg class="w-12 h-12 transform -rotate-90">
+<circle class="text-surface-variant" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-secondary-container" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="12.56" stroke-width="4"></circle>
+</svg>
+<span class="absolute text-[10px] font-bold text-on-secondary-container">98%</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">High Confidence Extraction</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Voice transcription and SKU matching verified against real-time inventory.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-sm text-headline-sm text-primary">Review Items (12)</h2>
+<button class="flex items-center gap-2 text-primary hover:bg-surface-variant/30 px-3 py-1 rounded-lg transition-all">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+<span class="font-label-lg text-label-lg">Manual Add</span>
+</button>
+</div>
+<!-- Data Table for Items -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-outline-variant/30">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">ITEM DETAILS</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">SKU</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">QTY</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">COMPLIANCE</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant text-right">PRICE</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-4 py-4">
+<p class="font-label-lg text-label-lg text-primary">Industrial Grade Steel Bolt (M12)</p>
+<p class="text-[10px] text-on-surface-variant">Extracted from: "Ten boxes of M12 steel bolts"</p>
+</td>
+<td class="px-4 py-4 font-label-lg text-label-lg">ST-BLT-M12-01</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg bg-surface-container px-2 py-1 rounded">10</span>
+<span class="text-[10px] text-on-surface-variant">Units</span>
+</div>
+</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">GST COMPLIANT</span>
+</td>
+<td class="px-4 py-4 text-right font-label-lg text-label-lg text-primary">₹1,240.00</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-4 py-4">
+<p class="font-label-lg text-label-lg text-primary">Heavy Duty Brass Valve 1.5"</p>
+<p class="text-[10px] text-on-surface-variant">Extracted from: "Two brass valves one and half inch"</p>
+</td>
+<td class="px-4 py-4 font-label-lg text-label-lg">BR-VLV-150-HD</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg bg-surface-container px-2 py-1 rounded">2</span>
+<span class="text-[10px] text-on-surface-variant">Units</span>
+</div>
+</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">GST COMPLIANT</span>
+</td>
+<td class="px-4 py-4 text-right font-label-lg text-label-lg text-primary">₹3,450.00</td>
+</tr>
+<!-- Row 3 (AI Warning) -->
+<tr class="bg-amber-50/30 hover:bg-amber-50 transition-colors group">
+<td class="px-4 py-4">
+<p class="font-label-lg text-label-lg text-primary">Nylon Fasteners (Mixed)</p>
+<p class="text-[10px] text-amber-700 italic">Unclear quantity: "A bunch of nylon ones"</p>
+</td>
+<td class="px-4 py-4 font-label-lg text-label-lg">NY-FST-VAR</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-2">
+<input class="w-12 h-8 rounded border-outline-variant text-[12px] p-1" type="number" value="1"/>
+<span class="text-[10px] text-on-surface-variant">Pack</span>
+</div>
+</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold uppercase">Manual Check Req.</span>
+</td>
+<td class="px-4 py-4 text-right font-label-lg text-label-lg text-primary">₹450.00</td>
+</tr>
+<!-- More Rows Placeholder -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-4 py-4">
+<p class="font-label-lg text-label-lg text-primary">Pneumatic Seal Kit 40mm</p>
+<p class="text-[10px] text-on-surface-variant">Extracted from: "One seal kit for forty mill pneu"</p>
+</td>
+<td class="px-4 py-4 font-label-lg text-label-lg">PN-SLK-40-02</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg bg-surface-container px-2 py-1 rounded">1</span>
+<span class="text-[10px] text-on-surface-variant">Kit</span>
+</div>
+</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">GST COMPLIANT</span>
+</td>
+<td class="px-4 py-4 text-right font-label-lg text-label-lg text-primary">₹890.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Right: Summary Panel -->
+<aside class="w-[320px] bg-surface-container-low border-l border-outline-variant flex flex-col p-6">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-6">Billing Summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">Subtotal</span>
+<span class="font-label-lg text-label-lg text-primary">₹6,030.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">CGST (9%)</span>
+<span class="font-label-lg text-label-lg text-primary">₹542.70</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">SGST (9%)</span>
+<span class="font-label-lg text-label-lg text-primary">₹542.70</span>
+</div>
+<div class="pt-4 border-t border-outline-variant flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary">Total Amount</span>
+<span class="font-headline-sm text-headline-sm text-primary">₹7,115.40</span>
+</div>
+</div>
+<!-- Customer Details Card -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant mb-6">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-secondary-container">account_circle</span>
+<h4 class="font-label-lg text-label-lg text-primary">Customer Identity</h4>
+</div>
+<p class="font-label-lg text-label-lg text-primary">Global Tech Solutions Pvt Ltd</p>
+<p class="text-[10px] text-on-surface-variant mb-3">GSTIN: 27AABCG1234F1Z5</p>
+<button class="w-full py-2 bg-surface-container-high rounded-lg text-primary font-label-lg text-label-lg hover:bg-surface-variant transition-colors">Change Customer</button>
+</div>
+<!-- Visual Cue for Image Generation -->
+<div class="relative w-full aspect-video rounded-xl overflow-hidden mb-6 group cursor-pointer shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A clean top-down workspace view with a sleek high-tech tablet showing complex financial graphs and AI-powered billing tools. Minimalist enterprise desk setup with a mechanical keyboard, warm accent lighting, and a soft primary navy color scheme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBekC3zfpqa4VLn8dPwNvsgSCzgIOfs1aLuFxBlNHUfbldIQOVlwWAKYslADsYGAfORYmG1RLxA6_LTTX8mIFz2tqQFsne4bWN-vShzn7dxYhkxj5_KyL1ZLqtuNLJkLKAhem5P0H3T71KCSiTRv4GNrHRqzWl6fMe3QT6-QKF2mQ8lcj24LipMx-mmp82-McsADhVHfODzvaJCzMzIIIV32eU53LwX87eGmFJUTDNNK_z3txD4jMJ3iuaXYj639zWn21UQx6Y5df4"/>
+<div class="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-on-primary font-label-lg text-label-lg px-3 py-1 bg-primary/60 rounded-full">Preview Invoice</span>
+</div>
+</div>
+<div class="mt-auto space-y-3">
+<button class="w-full py-4 bg-primary text-on-primary rounded-xl font-headline-sm text-headline-sm hover:opacity-90 active:scale-95 transition-all shadow-md">
+                        Confirm &amp; Generate
+                    </button>
+<button class="w-full py-3 bg-transparent border-2 border-primary text-primary rounded-xl font-label-lg text-label-lg hover:bg-primary/5 transition-all">
+                        Hold Session
+                    </button>
+</div>
+</aside>
+</div>
+<!-- Floating Voice Action (Specific context only) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-primary text-on-primary px-6 py-3 rounded-full shadow-2xl z-50 animate-pulse">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">mic</span>
+<span class="font-label-lg text-label-lg uppercase tracking-widest">Listening...</span>
+<div class="flex gap-1">
+<div class="w-1 h-3 bg-on-primary/60 rounded-full"></div>
+<div class="w-1 h-5 bg-on-primary rounded-full"></div>
+<div class="w-1 h-3 bg-on-primary/60 rounded-full"></div>
+</div>
+</div>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple scale effect for interactive elements
+        document.querySelectorAll('button, .group').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simulating AI session feedback
+        setTimeout(() => {
+            console.log('AI Extraction verification complete.');
+        }, 1500);
+    </script>
+</body></html>

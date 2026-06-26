@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DHINADTS ERP - Voice Billing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mic-active-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(253, 139, 0, 0.4); }
+            70% { transform: scale(1); box-shadow: 0 0 0 40px rgba(253, 139, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(253, 139, 0, 0); }
+        }
+        .wave-bar {
+            animation: wave-animation 1.2s ease-in-out infinite;
+        }
+        @keyframes wave-animation {
+            0%, 100% { height: 8px; }
+            50% { height: 32px; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(224, 228, 232, 0.5);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary": "#000a1e",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#000d0d",
+                        "surface": "#f8f9fa",
+                        "on-secondary-fixed": "#2f1500",
+                        "tertiary-fixed-dim": "#76d6d5",
+                        "on-secondary-fixed-variant": "#6e3900",
+                        "inverse-surface": "#2e3132",
+                        "secondary-container": "#fd8b00",
+                        "tertiary-container": "#002626",
+                        "outline-variant": "#c4c6cf",
+                        "secondary-fixed-dim": "#ffb77d",
+                        "surface-tint": "#465f88",
+                        "inverse-on-surface": "#f0f1f2",
+                        "background": "#f8f9fa",
+                        "surface-dim": "#d9dadb",
+                        "outline": "#74777f",
+                        "on-secondary-container": "#603100",
+                        "on-background": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#93f2f2",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-container": "#002147",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-error": "#ffffff",
+                        "secondary": "#904d00",
+                        "surface-bright": "#f8f9fa",
+                        "secondary-fixed": "#ffdcc3",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary-container": "#2f9696",
+                        "surface-variant": "#e1e3e4",
+                        "inverse-primary": "#aec7f6",
+                        "surface-container": "#edeeef",
+                        "on-tertiary-fixed-variant": "#004f4f",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#aec7f6",
+                        "on-tertiary-fixed": "#002020",
+                        "on-primary-container": "#708ab5",
+                        "primary-fixed": "#d6e3ff",
+                        "on-surface-variant": "#44474e",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "container-margin": "24px",
+                        "section-gap": "32px",
+                        "gutter": "16px",
+                        "card-padding": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex overflow-hidden">
+<!-- Navigation Drawer (Rail for Tablet View) -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col z-40 bg-surface-container-lowest border-r border-outline-variant w-[80px] lg:w-[280px] transition-all duration-300">
+<div class="flex items-center gap-3 px-4 h-16 mb-4">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">data_exploration</span>
+</div>
+<div class="hidden lg:block overflow-hidden whitespace-nowrap">
+<h1 class="font-headline-sm text-headline-sm font-black text-primary">DHINADTS ERP</h1>
+<p class="text-label-sm text-on-surface-variant">Admin Panel v2.1</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<!-- Dashboard -->
+<a class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start lg:px-4 py-3 gap-4 group transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="hidden lg:block font-label-lg text-label-lg">Dashboard</span>
+</a>
+<!-- Invoices -->
+<a class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start lg:px-4 py-3 gap-4 transition-colors" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="hidden lg:block font-label-lg text-label-lg">Invoices</span>
+</a>
+<!-- Inventory -->
+<a class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start lg:px-4 py-3 gap-4 transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="hidden lg:block font-label-lg text-label-lg">Inventory</span>
+</a>
+<!-- Active State: AI Assistant (Voice Billing) -->
+<a class="bg-secondary-container text-on-secondary-container rounded-full mx-3 my-1 flex items-center justify-center lg:justify-start lg:px-4 py-3 gap-4 scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="hidden lg:block font-label-lg text-label-lg">AI Assistant</span>
+</a>
+<!-- Reports -->
+<a class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start lg:px-4 py-3 gap-4 transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="hidden lg:block font-label-lg text-label-lg">GST Reports</span>
+</a>
+</nav>
+<div class="mt-auto pb-6">
+<a class="text-on-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full flex items-center justify-center lg:justify-start lg:px-4 py-3 gap-4 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="hidden lg:block font-label-lg text-label-lg">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[80px] lg:ml-[280px] flex h-screen">
+<!-- Center/Main: Active Microphone & Transcription -->
+<section class="flex-1 flex flex-col relative overflow-hidden">
+<!-- Top Bar -->
+<header class="h-16 flex items-center justify-between px-container-margin border-b border-outline-variant bg-surface">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-all">arrow_back</button>
+<h2 class="font-headline-md text-headline-md font-bold tracking-tight text-primary">Voice Billing Active</h2>
+</div>
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-2 px-3 py-1 bg-secondary/10 text-secondary rounded-full font-label-lg">
+<span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+                        LISTENING
+                    </span>
+</div>
+</header>
+<!-- Transcription Content -->
+<div class="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto">
+<!-- Mic Animation Container -->
+<div class="relative mb-12">
+<div class="mic-active-pulse absolute inset-0 bg-secondary/20 rounded-full"></div>
+<div class="w-40 h-40 bg-secondary rounded-full flex items-center justify-center shadow-lg relative z-10">
+<span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">settings_voice</span>
+</div>
+<!-- Sound Wave Visualizer -->
+<div class="absolute -bottom-16 left-1/2 -translate-x-1/2 flex items-end gap-1 h-12 w-48 justify-center">
+<div class="wave-bar w-1.5 bg-secondary rounded-full" style="animation-delay: 0.1s"></div>
+<div class="wave-bar w-1.5 bg-secondary rounded-full" style="animation-delay: 0.3s"></div>
+<div class="wave-bar w-1.5 bg-secondary rounded-full" style="animation-delay: 0.5s"></div>
+<div class="wave-bar w-1.5 bg-secondary rounded-full" style="animation-delay: 0.2s"></div>
+<div class="wave-bar w-1.5 bg-secondary rounded-full" style="animation-delay: 0.4s"></div>
+<div class="wave-bar w-1.5 bg-secondary rounded-full" style="animation-delay: 0.6s"></div>
+<div class="wave-bar w-1.5 bg-secondary rounded-full" style="animation-delay: 0.1s"></div>
+</div>
+</div>
+<!-- Real-time Transcription Display -->
+<div class="max-w-2xl w-full text-center space-y-4">
+<p class="text-on-surface-variant font-headline-sm opacity-60 leading-relaxed italic">
+                        "...waiting for input..."
+                    </p>
+<h3 class="font-headline-md text-primary leading-snug">
+                        "Add five units of <span class="text-secondary border-b-2 border-secondary/30">Industrial Bearings</span> for order ID 4592..."
+                    </h3>
+<div class="flex justify-center gap-2 mt-4">
+<span class="px-4 py-2 bg-surface-container-high rounded-xl text-primary font-label-lg border border-outline-variant">Bearings</span>
+<span class="px-4 py-2 bg-surface-container-high rounded-xl text-primary font-label-lg border border-outline-variant">SKU-2094</span>
+<span class="px-4 py-2 bg-surface-container-high rounded-xl text-primary font-label-lg border border-outline-variant">Qty: 5</span>
+</div>
+</div>
+</div>
+<!-- Footer Controls -->
+<footer class="p-6 flex justify-center items-center gap-4 bg-surface-container-low border-t border-outline-variant">
+<button class="px-8 py-3 bg-primary text-on-primary rounded-full font-label-lg flex items-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-base">check_circle</span>
+                    CONFIRM ENTRY
+                </button>
+<button class="px-8 py-3 bg-surface border-1.5 border-primary text-primary rounded-full font-label-lg hover:bg-surface-variant transition-all">
+                    CANCEL
+                </button>
+</footer>
+</section>
+<!-- Right: Session Context / History Panel -->
+<aside class="w-[320px] bg-surface-container-low border-l border-outline-variant flex flex-col hidden md:flex">
+<div class="p-6 border-b border-outline-variant flex items-center justify-between">
+<h3 class="font-headline-sm text-primary">Session Context</h3>
+<span class="text-label-lg text-secondary">3 ITEMS</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Session Item 1 -->
+<div class="glass-panel p-4 rounded-xl space-y-3">
+<div class="flex justify-between items-start">
+<span class="text-label-sm px-2 py-0.5 bg-on-tertiary-container/10 text-on-tertiary-container rounded">PROCESSED</span>
+<span class="text-label-sm text-on-surface-variant">2m ago</span>
+</div>
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded bg-primary/5 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">inventory</span>
+</div>
+<div>
+<p class="font-label-lg text-primary">Electric Motor 2HP</p>
+<p class="text-label-sm text-on-surface-variant">Qty: 2 | Unit: ₹14,500</p>
+</div>
+</div>
+</div>
+<!-- Session Item 2 -->
+<div class="glass-panel p-4 rounded-xl space-y-3">
+<div class="flex justify-between items-start">
+<span class="text-label-sm px-2 py-0.5 bg-on-tertiary-container/10 text-on-tertiary-container rounded">PROCESSED</span>
+<span class="text-label-sm text-on-surface-variant">5m ago</span>
+</div>
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded bg-primary/5 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">precision_manufacturing</span>
+</div>
+<div>
+<p class="font-label-lg text-primary">Steel Housing Shell</p>
+<p class="text-label-sm text-on-surface-variant">Qty: 10 | Unit: ₹450</p>
+</div>
+</div>
+</div>
+<!-- Session Item 3 -->
+<div class="glass-panel p-4 rounded-xl space-y-3">
+<div class="flex justify-between items-start">
+<span class="text-label-sm px-2 py-0.5 bg-secondary/10 text-secondary rounded">LAST ADDED</span>
+<span class="text-label-sm text-on-surface-variant">Just now</span>
+</div>
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded bg-primary/5 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">conveyor_belt</span>
+</div>
+<div>
+<p class="font-label-lg text-primary">Fan Belts - A42</p>
+<p class="text-label-sm text-on-surface-variant">Qty: 50 | Unit: ₹85</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Totals Preview -->
+<div class="p-6 bg-surface-container-high space-y-3">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-lg">Subtotal</span>
+<span class="font-body-md">₹37,750.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-lg">GST (18%)</span>
+<span class="font-body-md">₹6,795.00</span>
+</div>
+<div class="pt-3 border-t border-outline flex justify-between items-center">
+<span class="font-headline-sm text-primary">Total</span>
+<span class="font-headline-sm text-secondary font-bold">₹44,545.00</span>
+</div>
+</div>
+</aside>
+</main>
+<!-- Background Abstract Animation -->
+<div class="fixed inset-0 -z-10 opacity-20 pointer-events-none">
+
+</div>
+<script>
+        // Micro-interaction for mic pulsing state
+        const micIcon = document.querySelector('.mic-active-pulse');
+        let scale = 1;
+        let growing = true;
+
+        function animateMic() {
+            if(growing) {
+                scale += 0.002;
+                if(scale > 1.1) growing = false;
+            } else {
+                scale -= 0.002;
+                if(scale < 1) growing = true;
+            }
+            micIcon.style.transform = `scale(${scale})`;
+            requestAnimationFrame(animateMic);
+        }
+        
+        // Start atmospheric animation
+        requestAnimationFrame(animateMic);
+
+        // Simulated Transcription Text Updates
+        const transcriptionLines = [
+            "Setting vendor to Reliable Tools Corp...",
+            "Checking stock availability for item 4592...",
+            "Price confirmed at market rate ₹1,200...",
+            "Applying volume discount of 5%..."
+        ];
+        let currentLine = 0;
+        const subText = document.querySelector('.opacity-60');
+
+        setInterval(() => {
+            subText.classList.add('opacity-0');
+            setTimeout(() => {
+                subText.innerText = `"...${transcriptionLines[currentLine]}..."`;
+                subText.classList.remove('opacity-0');
+                currentLine = (currentLine + 1) % transcriptionLines.length;
+            }, 500);
+        }, 4000);
+    </script>
+</body></html>

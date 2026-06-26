@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OCR Document Upload - DHINADTS ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#aec7f6",
+                        "on-tertiary-fixed-variant": "#004f4f",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#2f1500",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary": "#000d0d",
+                        "secondary-container": "#fd8b00",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "secondary": "#904d00",
+                        "primary-container": "#002147",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed": "#002020",
+                        "background": "#f8f9fa",
+                        "surface-container": "#edeeef",
+                        "on-surface-variant": "#44474e",
+                        "primary-fixed-dim": "#aec7f6",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f3f4f5",
+                        "outline-variant": "#c4c6cf",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-container": "#603100",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "surface-tint": "#465f88",
+                        "secondary-fixed-dim": "#ffb77d",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-fixed-variant": "#6e3900",
+                        "tertiary-container": "#002626",
+                        "on-tertiary-container": "#2f9696",
+                        "outline": "#74777f",
+                        "primary": "#000a1e",
+                        "on-background": "#191c1d",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#76d6d5",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001b3d",
+                        "tertiary-fixed": "#93f2f2",
+                        "surface-container-high": "#e7e8e9",
+                        "secondary-fixed": "#ffdcc3",
+                        "on-primary-container": "#708ab5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "section-gap": "32px",
+                        "gutter": "16px",
+                        "container-margin": "24px",
+                        "card-padding": "20px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-1px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanning-animation {
+            background: linear-gradient(to bottom, transparent 45%, rgba(253, 139, 0, 0.4) 50%, transparent 55%);
+            background-size: 100% 200%;
+            animation: scan 3s linear infinite;
+        }
+        @keyframes scan {
+            0% { background-position: 0% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-container-low docked full-width top-0 z-50 border-b border-outline-variant dark:border-outline flex justify-between items-center w-full px-container-margin h-16 sticky">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-variant/50 dark:hover:bg-surface-container-high transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight text-primary dark:text-primary-fixed">OCR Upload</h1>
+</div>
+<button class="hover:bg-surface-variant/50 dark:hover:bg-surface-container-high transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">notifications</span>
+</button>
+</header>
+<main class="flex-grow px-container-margin py-base flex flex-col gap-6 max-w-lg mx-auto w-full pb-24">
+<!-- Upload Zone -->
+<section class="relative">
+<div class="w-full aspect-square md:aspect-[4/3] border-2 border-dashed border-outline-variant rounded-xl bg-surface-container-lowest flex flex-col items-center justify-center p-8 text-center relative overflow-hidden group hover:border-secondary transition-colors duration-300">
+<!-- Scanning Decorative Element -->
+<div class="absolute inset-0 scanning-animation opacity-20 pointer-events-none"></div>
+<div class="z-10 flex flex-col items-center">
+<div class="w-20 h-20 rounded-full bg-secondary-fixed mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-4xl">cloud_upload</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-2">Drop files here</h2>
+<p class="text-on-surface-variant font-body-md text-body-md mb-8">Upload purchase bills, invoices or tax documents for instant processing</p>
+<!-- Action Button -->
+<button class="bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-on-secondary transition-all duration-200 flex items-center gap-3 px-8 py-4 rounded-full shadow-lg active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+<span class="font-label-lg text-label-lg uppercase">Snap a Photo</span>
+</button>
+</div>
+</div>
+</section>
+<!-- AI Tip Card -->
+<section>
+<div class="bg-primary-container p-card-padding rounded-xl border border-primary-fixed/20 flex gap-4 items-start relative overflow-hidden shadow-sm">
+<div class="absolute top-0 right-0 opacity-10">
+<span class="material-symbols-outlined text-[80px] -mr-4 -mt-4 text-on-primary-container">smart_toy</span>
+</div>
+<div class="bg-secondary-container/20 p-2 rounded-lg shrink-0">
+<span class="material-symbols-outlined text-secondary-container">auto_awesome</span>
+</div>
+<div class="relative z-10">
+<h3 class="font-label-lg text-label-lg text-on-primary-container mb-1">AI Tip</h3>
+<p class="text-on-primary-container/90 font-body-md text-body-md">Did you know? Our OCR engine supports multi-page PDF scanning and automatic batch sorting for high-volume invoice processing.</p>
+</div>
+</div>
+</section>
+<!-- Recent Uploads -->
+<section class="flex flex-col gap-4">
+<div class="flex justify-between items-center px-1">
+<h3 class="font-headline-sm text-headline-sm text-primary">Recent Uploads</h3>
+<button class="text-secondary font-label-lg text-label-lg">View All</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Item 1: Processing -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 hover:bg-surface-container-high transition-colors">
+<div class="w-12 h-12 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A macro photograph of a business invoice document with printed financial tables and a logo, shot with shallow depth of field in a clean office environment. The lighting is soft and natural, emphasizing the texture of the white paper. The overall style is professional, high-end, and corporate, fitting an ERP dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA59t9n82tuEIIhkSC-AePG38NG4upTED_VmfpcZbpuLTLidQ4l9AH8dX9TTK0tt1eB392LkUSVN0NxgP-9Kqk_Bxxx07p8Efzfu5WDdHsqy4K6OTL_Nzuf4HiT58kSAo-WreSnbX1Nzvzm5b1h4wYYphDWnboRg7gmMax3D-jMAN_uG9JCOk53zb6MaToYBs2D2iXXJ3ndOryBw2izcp6GNKYz5UEEoM8JSdCQmGAWmrHm6DjDumv9r6PtHFBtNIsfcdHhzMVufPA"/>
+</div>
+<div class="flex-grow min-w-0">
+<p class="font-label-lg text-label-lg text-primary truncate">Inv_#44920_Delhi_Office.pdf</p>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Today, 2:30 PM</p>
+</div>
+<div class="flex items-center gap-2 bg-secondary-fixed/30 px-3 py-1 rounded-full">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-secondary">Processing</span>
+</div>
+</div>
+<!-- Item 2: Success -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 hover:bg-surface-container-high transition-colors">
+<div class="w-12 h-12 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up shot of a crumpled receipt on a wooden desk, with sharp focus on the printed numbers and text. The lighting is bright and crisp, highlighting the high-contrast black ink on thermal paper. The aesthetic is clean and functional, suitable for a mobile expense tracking application designed for business professionals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1zVilpNsMkqIxEkQdM-uM2mRbYJMJceNohQU89hJ_8v2j45Y7mgwG0582Bifpjb2Fy9Xh8qqLrXcnoQvwduEH_XsmhLX879RVMOSRVaLqK2MWqmqgFLKhWpm6u1PJkRwZwvdMLJTRjYFm4QrVZwFhOlLBOS_50vmhcuuIBsB7wnJZ63_h2Iys_h9kDsyOujGycN49LpYSZgDsTOsVNv_cEOxmO3ZAtaayGLAuTgXadnaX99_Muoe4FVgfO4k190DMX5v42fXfiY8"/>
+</div>
+<div class="flex-grow min-w-0">
+<p class="font-label-lg text-label-lg text-primary truncate">Amazon_Cloud_Oct_23.jpg</p>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Yesterday, 11:15 AM</p>
+</div>
+<div class="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-green-700 dark:text-green-400">check_circle</span>
+<span class="font-label-sm text-label-sm text-green-700 dark:text-green-400">Success</span>
+</div>
+</div>
+<!-- Item 3: Review Needed -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 hover:bg-surface-container-high transition-colors">
+<div class="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-surface-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+</div>
+<div class="flex-grow min-w-0">
+<p class="font-label-lg text-label-lg text-primary truncate">Raw_Materials_Vendor_02.png</p>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Oct 24, 09:45 AM</p>
+</div>
+<div class="flex items-center gap-2 bg-amber-100 dark:bg-amber-900/30 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-amber-700 dark:text-amber-400">warning</span>
+<span class="font-label-sm text-label-sm text-amber-700 dark:text-amber-400 text-nowrap">Review Needed</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- NavigationDrawer (Web Only) -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col z-40 bg-surface-container-lowest dark:bg-surface-container-low border-r border-outline-variant shadow-sm w-[280px] hidden lg:flex">
+<div class="p-6 flex items-center gap-4 mb-6">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A minimalist vector logo icon of a stylized geometric D in deep navy and vibrant orange, designed for a high-end corporate ERP brand. The logo is modern, clean, and professional, set against a pristine white background. The aesthetic is inspired by technology and financial reliability for the MSME sector in India." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnNpGJs53FAHV0PrlCa1UvL0f3I5Lv8PkXAjM_ZeQvIsZmDdZcTIRNX0dH7caArfZ4rfd4SaQHuZ7f7PDUg9bD2phfS1yetUVtKPaMIshNVkbe7On5nC8HZW2z3ivDVTcAgnI4XsnaJ4VcV0uk6MsmfpBnhseD7UA7B6ClvrvUnC7y6mnygmj_vtlCbsykgrWQmDXT2HitOLyeja-0JYr7I0JsAFKw-1KBky8MDfpM_Qn4k7NjZM5wdqWHcA6Bsl6cH8CwxGkohEk"/>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-black text-primary dark:text-primary-fixed">DHINADTS</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">v2.1 Admin Panel</p>
+</div>
+</div>
+<nav class="flex flex-col flex-grow">
+<!-- Navigation Items Mapping -->
+<a class="flex items-center gap-3 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-transform duration-150" href="#">
+<span class="material-symbols-outlined ml-4">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-transform duration-150" href="#">
+<span class="material-symbols-outlined ml-4">receipt_long</span>
+<span class="font-label-lg text-label-lg">Invoices</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-transform duration-150" href="#">
+<span class="material-symbols-outlined ml-4">inventory_2</span>
+<span class="font-label-lg text-label-lg">Inventory</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-transform duration-150" href="#">
+<span class="material-symbols-outlined ml-4">account_balance</span>
+<span class="font-label-lg text-label-lg">GST Reports</span>
+</a>
+<a class="flex items-center gap-3 py-3 bg-secondary-container text-on-secondary-container dark:bg-secondary dark:text-on-secondary rounded-full mx-3 my-1 scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined ml-4">smart_toy</span>
+<span class="font-label-lg text-label-lg">AI Assistant</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-on-surface-variant dark:text-surface-variant mx-3 my-1 hover:bg-surface-variant rounded-full transition-transform duration-150 mt-auto mb-6" href="#">
+<span class="material-symbols-outlined ml-4">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-2 pb-safe bg-surface dark:bg-surface-container-highest border-t border-outline-variant shadow-[0_-2px_8px_rgba(0,10,30,0.04)] lg:hidden rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant/30 px-3 py-1" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant/30 px-3 py-1" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Sales</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-full px-5 py-1 scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings_voice</span>
+<span class="font-label-sm text-label-sm">AI Scan</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant/30 px-3 py-1" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant/30 px-3 py-1" href="#">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="font-label-sm text-label-sm">Menu</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for the upload zone
+        const dropZone = document.querySelector('section.relative > div');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-secondary', 'bg-surface-container-high');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-secondary', 'bg-surface-container-high');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-secondary', 'bg-surface-container-high');
+            alert('File processing started...');
+        });
+    </script>
+</body></html>
