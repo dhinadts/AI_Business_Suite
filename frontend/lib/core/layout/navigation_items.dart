@@ -154,13 +154,17 @@ List<NavItem> navItemsForUiModules(
   List<String> modules, {
   required bool mobile,
 }) {
-  final items = [for (final module in modules) navItemForModule(module)];
-  if (mobile && items.length > 4) {
+  final items = [
+    const NavItem('Home', Icons.dashboard_rounded, '/dashboard'),
+    for (final module in modules) navItemForModule(module),
+  ];
+  if (mobile && items.length > 5) {
     return [
       ...items.take(4),
       const NavItem('More', Icons.apps_rounded, '/settings'),
     ];
   }
+  if (mobile) return items;
   return [
     ...items,
     const NavItem(

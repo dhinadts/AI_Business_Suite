@@ -41,6 +41,9 @@ class AiBusinessManagerApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
       routerConfig: ref.watch(appRouterProvider),
+      builder: (context, child) {
+        return SafeArea(child: child ?? const SizedBox.shrink());
+      },
     );
   }
 }

@@ -70,6 +70,7 @@ class AppTheme {
         elevation: 0,
         centerTitle: false,
       ),
+      pageTransitionsTheme: _noTransitions,
     );
   }
 
@@ -140,6 +141,32 @@ class AppTheme {
         centerTitle: false,
       ),
       dividerTheme: const DividerThemeData(color: AppColors.darkOutline),
+      pageTransitionsTheme: _noTransitions,
     );
+  }
+
+  static const _noTransitions = PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: _NoTransitionsBuilder(),
+      TargetPlatform.iOS: _NoTransitionsBuilder(),
+      TargetPlatform.macOS: _NoTransitionsBuilder(),
+      TargetPlatform.windows: _NoTransitionsBuilder(),
+      TargetPlatform.linux: _NoTransitionsBuilder(),
+    },
+  );
+}
+
+class _NoTransitionsBuilder extends PageTransitionsBuilder {
+  const _NoTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child;
   }
 }
