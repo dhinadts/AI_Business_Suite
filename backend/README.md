@@ -14,6 +14,12 @@ npm run seed
 npm run start:dev
 ```
 
+For production/live MongoDB, keep the database name in the connection string:
+
+```text
+mongodb+srv://USER:PASSWORD@HOST/ai_business_suite?retryWrites=true&w=majority
+```
+
 API:
 
 ```text
@@ -36,19 +42,46 @@ JWT_EXPIRES_IN=7d
 CORS_ORIGIN=http://127.0.0.1:5173,http://127.0.0.1:5175,http://localhost:5173,http://localhost:5175
 ```
 
+## Render Deployment
+
+Use these settings for the backend service:
+
+```text
+Root Directory: backend
+Build Command: npm install && npx prisma generate && npm run build
+Start Command: npm run start
+```
+
+Set these Render environment variables:
+
+```text
+DATABASE_URL=<your live MongoDB connection string with /ai_business_suite>
+JWT_SECRET=<strong production secret>
+JWT_EXPIRES_IN=7d
+CORS_ORIGIN=<your Flutter web/PWA URL>
+PORT=4000
+```
+
+After creating or changing the live database schema, run from this folder:
+
+```bash
+npx prisma db push --skip-generate
+npm run seed
+```
+
 ## Auth Flow
 
 - Signup -> Company Registration -> Auto Classification -> Personalized Dashboard
 - Login -> Load Company Profile -> Load UI Config -> Personalized Dashboard
 
-## Demo Users
+## Demo Users And Credentials
 
-```text
-grocery@demo.com / Password@123
-small@demo.com / Password@123
-medium@demo.com / Password@123
-large@demo.com / Password@123
-```
+| Business preset | Email | Password | Notes |
+| --- | --- | --- | --- |
+| Grocery store | `grocery@demo.com` | `Password@123` | Association head demo account |
+| Small business | `small@demo.com` | `Password@123` | MSME basic dashboard |
+| Medium business | `medium@demo.com` | `Password@123` | Growth dashboard |
+| Large business | `large@demo.com` | `Password@123` | Enterprise dashboard |
 
 Each demo account maps to a different dashboard preset.
 
@@ -59,6 +92,10 @@ Each demo account maps to a different dashboard preset.
 - `GET /auth/me`
 - `GET /companies/me`
 - `PATCH /companies/me`
+- `GET /associations/me`
+- `GET /associations/notifications`
+- `POST /associations/device-token`
+- `POST /associations/:associationId/notifications`
 
 ## Prisma Notes
 
