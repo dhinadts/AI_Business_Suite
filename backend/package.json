@@ -4,7 +4,7 @@
   "description": "NestJS + Prisma MongoDB backend for AI Business Suite.",
   "main": "dist/main.js",
   "scripts": {
-    "build": "nest build",
+    "build": "node prisma/render-build.js && nest build",
     "render:build": "node prisma/render-build.js",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
