@@ -8,9 +8,11 @@ import '../app/providers.dart';
 import '../app/theme.dart';
 import '../core/constants/assets.dart';
 import '../core/layout/responsive_scaffold.dart';
+import '../core/models/association_models.dart';
 import '../core/mock_data/mock_data.dart';
 import '../core/widgets/brand_logo.dart';
 import '../core/widgets/common_widgets.dart';
+import 'associations/providers/associations_provider.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -2757,24 +2759,369 @@ class AddTeamMemberScreen extends StatelessWidget {
   }
 }
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
+  ConsumerState<NotificationsScreen> createState() =>
+      _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(associationsProvider.notifier).load());
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(associationsProvider);
+    final width = MediaQuery.sizeOf(context).width;
+    final publisher = state.firstPublisher;
     return AppScaffold(
-      title: 'Notifications',
-      child: FormSectionCard(
-        title: 'Recent activity',
+      title: 'Association Notifications',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (final item in notifications)
-            ListTile(
-              leading: const Icon(Icons.notifications_active_rounded),
-              title: Text(item.title),
-              subtitle: Text(item.body),
-              trailing: Text(item.time),
+          ScreenHeader(
+            title: 'Association command center',
+            subtitle:
+                'Price changes, trade rules, market advisories, and delivery charge updates from approved industry associations.',
+          ),
+          const SizedBox(height: 18),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              FilledButton.icon(
+                onPressed: publisher == null
+                    ? null
+                    : () => _showPublishDialog(context, ref, publisher),
+                icon: const Icon(Icons.campaign_rounded),
+                label: const Text('Publish alert'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => ref.read(associationsProvider.notifier).load(),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Refresh'),
+              ),
+              const StatusChip('FCM foreground'),
+              const StatusChip('Background'),
+              const StatusChip('Terminated'),
+            ],
+          ),
+          const SizedBox(height: 18),
+          if (state.loading)
+            const LinearProgressIndicator()
+          else if (state.error != null)
+            EmptyState(
+              title: 'Association feed unavailable',
+              message: state.error!,
+              icon: Icons.cloud_off_rounded,
+            )
+          else ...[
+            _AssociationMembershipStrip(associations: state.associations),
+            const SizedBox(height: 18),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final columns = width >= 1100 ? 2 : 1;
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: state.notices.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    crossAxisSpacing: 14,
+                    mainAxisSpacing: 14,
+                    mainAxisExtent: width < 560 ? 236 : 214,
+                  ),
+                  itemBuilder: (context, index) =>
+                      _AssociationNoticeCard(notice: state.notices[index]),
+                );
+              },
             ),
+            if (state.notices.isEmpty)
+              const EmptyState(
+                title: 'No association alerts',
+                message:
+                    'New rules, price-change circulars, and market notifications will appear here.',
+                icon: Icons.notifications_none_rounded,
+              ),
+          ],
         ],
+      ),
+    );
+  }
+
+  Future<void> _showPublishDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AssociationSummary association,
+  ) async {
+    final titleController = TextEditingController();
+    final bodyController = TextEditingController();
+    var severity = AssociationNotificationSeverity.priceChange;
+    var publishing = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Publish association alert'),
+              content: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: titleController,
+                        decoration: const InputDecoration(
+                          labelText: 'Title',
+                          prefixIcon: Icon(Icons.title_rounded),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<AssociationNotificationSeverity>(
+                        initialValue: severity,
+                        decoration: const InputDecoration(
+                          labelText: 'Severity',
+                          prefixIcon: Icon(Icons.priority_high_rounded),
+                        ),
+                        items: [
+                          for (final item
+                              in AssociationNotificationSeverity.values)
+                            DropdownMenuItem(
+                              value: item,
+                              child: Text(item.label),
+                            ),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            setDialogState(() => severity = value);
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: bodyController,
+                        maxLines: 5,
+                        decoration: const InputDecoration(
+                          labelText: 'Notification message',
+                          alignLabelWithHint: true,
+                          prefixIcon: Icon(Icons.notes_rounded),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: publishing ? null : () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton.icon(
+                  onPressed: publishing
+                      ? null
+                      : () async {
+                          setDialogState(() => publishing = true);
+                          await ref
+                              .read(associationsProvider.notifier)
+                              .publish(
+                                association: association,
+                                title: titleController.text.trim(),
+                                body: bodyController.text.trim(),
+                                severity: severity,
+                                targetStates: [
+                                  if (association.state != null)
+                                    association.state!,
+                                ],
+                              );
+                          if (context.mounted) Navigator.pop(context);
+                        },
+                  icon: publishing
+                      ? const SizedBox.square(
+                          dimension: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.send_rounded),
+                  label: const Text('Send push'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _AssociationMembershipStrip extends StatelessWidget {
+  const _AssociationMembershipStrip({required this.associations});
+
+  final List<AssociationSummary> associations;
+
+  @override
+  Widget build(BuildContext context) {
+    if (associations.isEmpty) {
+      return const EmptyState(
+        title: 'No association linked',
+        message:
+            'Link trade, transport, hotel, grocery, and industry associations to receive rule notifications.',
+        icon: Icons.groups_2_rounded,
+      );
+    }
+    return SizedBox(
+      height: 150,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: associations.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final item = associations[index];
+          return SizedBox(
+            width: 340,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: AppColors.orange.withValues(
+                            alpha: 0.12,
+                          ),
+                          foregroundColor: AppColors.orange,
+                          child: const Icon(Icons.account_balance_rounded),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w900),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Text(
+                      item.industry,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        StatusChip(item.role.label),
+                        if (item.state != null) StatusChip(item.state!),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _AssociationNoticeCard extends StatelessWidget {
+  const _AssociationNoticeCard({required this.notice});
+
+  final AssociationNotice notice;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = switch (notice.severity) {
+      AssociationNotificationSeverity.urgent => AppColors.red,
+      AssociationNotificationSeverity.priceChange => AppColors.orange,
+      AssociationNotificationSeverity.advisory => AppColors.teal,
+      AssociationNotificationSeverity.info => AppColors.navy,
+    };
+    final age = DateTime.now().difference(notice.createdAt);
+    final timeLabel = age.inHours < 1
+        ? '${age.inMinutes.clamp(1, 59)} min ago'
+        : age.inHours < 24
+        ? '${age.inHours} hr ago'
+        : '${age.inDays} day ago';
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: color.withValues(alpha: 0.12),
+                  foregroundColor: color,
+                  child: const Icon(Icons.campaign_rounded),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    notice.associationName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                StatusChip(notice.severity.label),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              notice.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Text(
+                notice.body,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.verified_user_rounded, size: 16, color: color),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '${notice.sentByRole.label} . ${notice.sentCount} businesses',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(timeLabel),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

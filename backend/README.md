@@ -1,6 +1,6 @@
 # AI Business Suite Backend
 
-Basic Express + MongoDB API for grocery billing and inventory.
+NestJS + Prisma + MongoDB backend for authentication, company registration, business classification, and UI personalization.
 
 ## Setup
 
@@ -8,50 +8,64 @@ Basic Express + MongoDB API for grocery billing and inventory.
 cd backend
 npm install
 copy .env.example .env
-npm run dev
+npx prisma generate
+npx prisma db push
+npm run seed
+npm run start:dev
 ```
 
-Default API URL:
+API:
 
 ```text
 http://localhost:4000
 ```
 
-## Environment
+Swagger:
 
-Set these values in `.env`:
+```text
+http://localhost:4000/docs
+```
+
+## Environment
 
 ```text
 PORT=4000
-MONGODB_URI=mongodb://127.0.0.1:27017/ai_business_suite
+DATABASE_URL=mongodb://127.0.0.1:27017/ai_business_suite
+JWT_SECRET=change-this-secret-in-production
+JWT_EXPIRES_IN=7d
 CORS_ORIGIN=http://127.0.0.1:5173,http://127.0.0.1:5175,http://localhost:5173,http://localhost:5175
 ```
 
+## Auth Flow
+
+- Signup -> Company Registration -> Auto Classification -> Personalized Dashboard
+- Login -> Load Company Profile -> Load UI Config -> Personalized Dashboard
+
+## Demo Users
+
+```text
+grocery@demo.com / Password@123
+small@demo.com / Password@123
+medium@demo.com / Password@123
+large@demo.com / Password@123
+```
+
+Each demo account maps to a different dashboard preset.
+
 ## Routes
 
-- `GET /api/health` - app and MongoDB status
-- `GET /api/health/ready` - readiness check
-- `GET /api/products` - list products
-- `POST /api/products` - create a product
-- `PATCH /api/products/:id` - update product
-- `POST /api/products/:id/stock-adjustments` - increase/decrease stock
-- `GET /api/bills` - list bills
-- `POST /api/bills` - create bill and reduce stock
+- `POST /auth/signup`
+- `POST /auth/login`
+- `GET /auth/me`
+- `GET /companies/me`
+- `PATCH /companies/me`
 
-## Example Product
+## Prisma Notes
 
-```json
-{
-  "name": "Rice Sona Masoori 5kg",
-  "sku": "GRC-RICE-5KG",
-  "unit": "bag",
-  "stockQuantity": 42,
-  "reorderLevel": 5,
-  "purchasePrice": 310,
-  "salePrice": 360,
-  "languageAliases": {
-    "hindi": "chawal",
-    "tamil": "arisi"
-  }
-}
+This project uses MongoDB through Prisma. MongoDB projects use:
+
+```bash
+npx prisma db push
 ```
+
+instead of SQL-style migration files.

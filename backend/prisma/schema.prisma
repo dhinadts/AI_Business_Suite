@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MANAGER
+  STAFF
+}
+
+enum AssociationRole {
+  HEAD
+  SUB_HEAD
+  FINANCIAL_SECRETARY
+  TREASURER
+  MEMBER
+}
+
+enum BusinessType {
+  GROCERY
+  RETAIL
+  WHOLESALE
+  MANUFACTURING
+  SERVICES
+  PHARMACY
+  TEXTILE
+  RESTAURANT
+  DISTRIBUTION
+  OTHER
+}
+
+enum BusinessClassification {
+  NORMAL_GROCERY_STORE
+  SMALL_BUSINESS
+  MEDIUM_BUSINESS
+  LARGE_BUSINESS
+}
+
+enum UiPreset {
+  GROCERY_SIMPLE
+  MSME_BASIC
+  MSME_GROWTH
+  ENTERPRISE_ADVANCED
+}
+
+enum AssociationNotificationSeverity {
+  INFO
+  ADVISORY
+  PRICE_CHANGE
+  URGENT
+}
+
+enum DevicePlatform {
+  ANDROID
+  IOS
+  WEB
+  DESKTOP
+  UNKNOWN
+}
+
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName     String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  role         UserRole @default(OWNER)
+  companyId    String   @db.ObjectId
+  company      Company  @relation(fields: [companyId], references: [id])
+  memberships  AssociationMembership[]
+  deviceTokens DeviceToken[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Company {
+  id                  String                 @id @default(auto()) @map("_id") @db.ObjectId
+  legalName           String
+  tradeName           String?
+  businessType        BusinessType
+  industry            String?
+  gstin               String?
+  udyamNumber         String?
+  pan                 String?
+  state               String?
+  city                String?
+  address             String?
+  pincode             String?
+  employeeCount       Int                    @default(1)
+  monthlyRevenue      Float                  @default(0)
+  branchCount         Int                    @default(1)
+  skuCount            Int                    @default(0)
+  invoiceVolume       Int                    @default(0)
+  hasGST              Boolean                @default(false)
+  classification      BusinessClassification
+  uiPreset            UiPreset
+  onboardingCompleted Boolean                @default(false)
+  users               User[]
+  memberships         AssociationMembership[]
+  notifications       AssociationNotification[]
+  deviceTokens        DeviceToken[]
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+}
+
+model Association {
+  id            String                         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  industry      String
+  state         String?
+  district      String?
+  description   String?
+  memberships   AssociationMembership[]
+  notifications AssociationNotification[]
+  createdAt     DateTime                       @default(now())
+  updatedAt     DateTime                       @updatedAt
+}
+
+model AssociationMembership {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  associationId String          @db.ObjectId
+  association   Association     @relation(fields: [associationId], references: [id])
+  companyId     String          @db.ObjectId
+  company       Company         @relation(fields: [companyId], references: [id])
+  userId        String?         @db.ObjectId
+  user          User?           @relation(fields: [userId], references: [id])
+  role          AssociationRole @default(MEMBER)
+  active        Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@unique([associationId, companyId])
+  @@index([companyId])
+  @@index([userId])
+}
+
+model AssociationNotification {
+  id            String                          @id @default(auto()) @map("_id") @db.ObjectId
+  associationId String                          @db.ObjectId
+  association   Association                     @relation(fields: [associationId], references: [id])
+  companyId     String?                         @db.ObjectId
+  company       Company?                        @relation(fields: [companyId], references: [id])
+  title         String
+  body          String
+  severity      AssociationNotificationSeverity @default(INFO)
+  actionLabel   String?
+  actionUrl     String?
+  sentByUserId  String                          @db.ObjectId
+  sentByRole    AssociationRole
+  targetStates  String[]
+  targetTypes   BusinessType[]
+  sentCount     Int                             @default(0)
+  createdAt     DateTime                        @default(now())
+
+  @@index([associationId])
+  @@index([companyId])
+}
+
+model DeviceToken {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  token     String         @unique
+  platform  DevicePlatform @default(UNKNOWN)
+  userId    String         @db.ObjectId
+  user      User           @relation(fields: [userId], references: [id])
+  companyId String         @db.ObjectId
+  company   Company        @relation(fields: [companyId], references: [id])
+  active    Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([companyId])
+  @@index([userId])
+}

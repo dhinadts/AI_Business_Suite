@@ -58,7 +58,9 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size(44, 48),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           textStyle: const TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
@@ -99,7 +101,10 @@ class AppTheme {
         ),
       ),
       dataTableTheme: const DataTableThemeData(
-        headingTextStyle: TextStyle(color: Color(0xFFF1F3F8), fontWeight: FontWeight.w700),
+        headingTextStyle: TextStyle(
+          color: Color(0xFFF1F3F8),
+          fontWeight: FontWeight.w700,
+        ),
         dataTextStyle: TextStyle(color: Color(0xFFE2E6EF)),
         dividerThickness: 0.7,
       ),
@@ -122,7 +127,9 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size(44, 48),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           textStyle: const TextStyle(fontWeight: FontWeight.w700),
         ),
       ),

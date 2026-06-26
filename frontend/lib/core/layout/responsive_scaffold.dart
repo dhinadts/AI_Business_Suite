@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/breakpoints.dart';
 import '../../app/providers.dart';
 import '../../app/theme.dart';
+import '../../features/associations/providers/associations_provider.dart';
+import '../../features/auth/providers/auth_provider.dart';
 import '../widgets/brand_logo.dart';
 import '../widgets/top_app_bar.dart';
 import 'navigation_items.dart';
@@ -48,45 +51,105 @@ class ResponsiveScaffold extends ConsumerWidget {
     final sizeClass = Breakpoints.of(context);
     final location = GoRouterState.of(context).uri.path;
     final profile = ref.watch(businessProfileProvider);
-    final primaryItems = primaryNavItemsForProfile(profile);
-    final mobileItems = mobileNavItemsForProfile(profile);
+    final session = ref.watch(authProvider).session;
+    final primaryItems = session == null
+        ? primaryNavItemsForProfile(profile)
+        : navItemsForUiModules(session.uiConfig.primaryModules, mobile: false);
+    final mobileItems = session == null
+        ? mobileNavItemsForProfile(profile)
+        : navItemsForUiModules(session.uiConfig.primaryModules, mobile: true);
     if (sizeClass == WindowSizeClass.mobile) {
-      return BottomNavShell(
-        title: title,
+      return AppBackGuard(
         location: location,
-        items: mobileItems,
-        floatingActionButton: floatingActionButton,
-        child: child,
+        child: BottomNavShell(
+          title: title,
+          location: location,
+          items: mobileItems,
+          floatingActionButton: floatingActionButton,
+          child: child,
+        ),
       );
     }
     if (sizeClass == WindowSizeClass.tablet) {
-      return TabletNavigationRail(
-        title: title,
+      return AppBackGuard(
         location: location,
-        items: primaryItems,
-        floatingActionButton: floatingActionButton,
-        child: child,
+        child: TabletNavigationRail(
+          title: title,
+          location: location,
+          items: primaryItems,
+          floatingActionButton: floatingActionButton,
+          child: child,
+        ),
       );
     }
-    return Scaffold(
-      appBar: TopAppBar(title: title),
-      floatingActionButton: floatingActionButton,
-      body: Row(
-        children: [
-          SidebarNavigation(location: location, items: primaryItems),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1500),
-                  child: child,
+    return AppBackGuard(
+      location: location,
+      child: Scaffold(
+        appBar: TopAppBar(title: title),
+        floatingActionButton: floatingActionButton,
+        body: Row(
+          children: [
+            SidebarNavigation(location: location, items: primaryItems),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1500),
+                    child: child,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class AppBackGuard extends StatelessWidget {
+  const AppBackGuard({super.key, required this.location, required this.child});
+
+  final String location;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        if (context.canPop()) {
+          context.pop();
+          return;
+        }
+        if (location != '/dashboard') {
+          context.go('/dashboard');
+          return;
+        }
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Exit AI Business Suite?'),
+            content: const Text('Do you want to close the app?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Stay'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Exit'),
+              ),
+            ],
+          ),
+        );
+        if (shouldExit == true) {
+          SystemNavigator.pop();
+        }
+      },
+      child: child,
     );
   }
 }
@@ -206,36 +269,48 @@ class BottomNavShell extends StatelessWidget {
     final size = MediaQuery.sizeOf(context);
     final landscape = size.width > size.height;
     final horizontalPadding = landscape ? 20.0 : 14.0;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
-        actions: [
-          IconButton(
-            onPressed: () => context.go('/notifications'),
-            icon: const Icon(Icons.notifications_none_rounded),
+    return Consumer(
+      builder: (context, ref, _) {
+        final unreadCount = ref.watch(associationsProvider).unreadCount;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            actions: [
+              Badge(
+                isLabelVisible: unreadCount > 0,
+                label: Text(unreadCount > 99 ? '99+' : '$unreadCount'),
+                child: IconButton(
+                  onPressed: () => context.go('/notifications'),
+                  icon: const Icon(Icons.notifications_none_rounded),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      floatingActionButton: floatingActionButton,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            horizontalPadding,
-            12,
-            horizontalPadding,
-            18,
+          floatingActionButton: floatingActionButton,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                12,
+                horizontalPadding,
+                18,
+              ),
+              child: child,
+            ),
           ),
-          child: child,
-        ),
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (index) => context.go(items[index].path),
-        destinations: [
-          for (final item in items)
-            NavigationDestination(icon: Icon(item.icon), label: item.label),
-        ],
-      ),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (index) => context.go(items[index].path),
+            destinations: [
+              for (final item in items)
+                NavigationDestination(icon: Icon(item.icon), label: item.label),
+            ],
+          ),
+        );
+      },
     );
   }
 }

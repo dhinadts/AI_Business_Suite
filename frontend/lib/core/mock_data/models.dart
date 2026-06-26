@@ -1,5 +1,11 @@
 class Customer {
-  const Customer(this.name, this.company, this.phone, this.status, this.revenue);
+  const Customer(
+    this.name,
+    this.company,
+    this.phone,
+    this.status,
+    this.revenue,
+  );
   final String name;
   final String company;
   final String phone;
@@ -17,7 +23,13 @@ class Product {
 }
 
 class Invoice {
-  const Invoice(this.number, this.customer, this.amount, this.status, this.date);
+  const Invoice(
+    this.number,
+    this.customer,
+    this.amount,
+    this.status,
+    this.date,
+  );
   final String number;
   final String customer;
   final double amount;

@@ -10,8 +10,12 @@ class BrandLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = onDark ? Colors.white : Theme.of(context).colorScheme.onSurface;
-    final labelColor = onDark ? Colors.white70 : Theme.of(context).colorScheme.onSurfaceVariant;
+    final textColor = onDark
+        ? Colors.white
+        : Theme.of(context).colorScheme.onSurface;
+    final labelColor = onDark
+        ? Colors.white70
+        : Theme.of(context).colorScheme.onSurfaceVariant;
     final logoSize = compact ? 26.0 : 44.0;
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -24,7 +28,12 @@ class BrandLogo extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(compact ? 8 : 12),
-                child: Image.asset(AppAssets.logo, height: logoSize, width: logoSize, fit: BoxFit.cover),
+                child: Image.asset(
+                  AppAssets.logo,
+                  height: logoSize,
+                  width: logoSize,
+                  fit: BoxFit.cover,
+                ),
               ),
               if (!compact) ...[
                 const SizedBox(height: 4),
@@ -34,11 +43,11 @@ class BrandLogo extends StatelessWidget {
                     'DHINADTS',
                     maxLines: 1,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: labelColor,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.4,
-                        ),
+                      color: labelColor,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.4,
+                    ),
                   ),
                 ),
               ],
@@ -52,7 +61,13 @@ class BrandLogo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('AI Business Suite', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: textColor, fontWeight: FontWeight.w800)),
+                Text(
+                  'AI Business Suite',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: textColor,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ],
             ),
           ),

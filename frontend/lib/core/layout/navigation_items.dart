@@ -17,6 +17,7 @@ const primaryNavItems = [
   NavItem('Accounting', Icons.account_balance_wallet_rounded, '/accounting'),
   NavItem('GST', Icons.verified_rounded, '/gst'),
   NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
+  NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
   NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
   NavItem('OCR Upload', Icons.document_scanner_rounded, '/ocr-upload'),
   NavItem('Voice Billing', Icons.mic_rounded, '/voice-billing'),
@@ -45,6 +46,7 @@ List<NavItem> primaryNavItemsForProfile(BusinessProfile profile) {
       NavItem('Scan Stock', Icons.document_scanner_rounded, '/ocr-upload'),
       NavItem('Translator', Icons.translate_rounded, '/translator'),
       NavItem('Printer', Icons.print_rounded, '/printer-setup'),
+      NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
       NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
       NavItem('Settings', Icons.settings_rounded, '/settings'),
     ];
@@ -57,6 +59,7 @@ List<NavItem> primaryNavItemsForProfile(BusinessProfile profile) {
       NavItem('Inventory', Icons.inventory_2_rounded, '/inventory'),
       NavItem('GST', Icons.verified_rounded, '/gst'),
       NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
+      NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
       NavItem('Settings', Icons.settings_rounded, '/settings'),
     ];
   }
@@ -74,6 +77,7 @@ List<NavItem> primaryNavItemsForProfile(BusinessProfile profile) {
       ),
       NavItem('GST', Icons.verified_rounded, '/gst'),
       NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
+      NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
       NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
       NavItem('Voice Billing', Icons.mic_rounded, '/voice-billing'),
       NavItem('Settings', Icons.settings_rounded, '/settings'),
@@ -94,6 +98,78 @@ List<NavItem> mobileNavItemsForProfile(BusinessProfile profile) {
     ];
   }
   return mobileNavItems;
+}
+
+NavItem navItemForModule(String module) {
+  return switch (module.toLowerCase()) {
+    'billing' => const NavItem(
+      'Billing',
+      Icons.receipt_long_rounded,
+      '/billing',
+    ),
+    'inventory' => const NavItem(
+      'Inventory',
+      Icons.inventory_2_rounded,
+      '/inventory',
+    ),
+    'customers' ||
+    'crm' => const NavItem('Customers', Icons.groups_rounded, '/crm'),
+    'expenses' || 'accounting' || 'finance' => const NavItem(
+      'Accounting',
+      Icons.account_balance_wallet_rounded,
+      '/accounting',
+    ),
+    'gst' => const NavItem('GST', Icons.verified_rounded, '/gst'),
+    'reports' || 'analytics' => const NavItem(
+      'Reports',
+      Icons.bar_chart_rounded,
+      '/reports',
+    ),
+    'associations' || 'notifications' => const NavItem(
+      'Associations',
+      Icons.account_balance_rounded,
+      '/notifications',
+    ),
+    'hrms' => const NavItem('HRMS', Icons.badge_rounded, '/settings/users'),
+    'purchase' || 'procurement' => const NavItem(
+      'Purchase',
+      Icons.shopping_cart_rounded,
+      '/inventory/stock-intake',
+    ),
+    'manufacturing' => const NavItem(
+      'Manufacturing',
+      Icons.factory_rounded,
+      '/settings',
+    ),
+    'admin' => const NavItem(
+      'Admin',
+      Icons.admin_panel_settings_rounded,
+      '/settings',
+    ),
+    _ => NavItem(module, Icons.apps_rounded, '/settings'),
+  };
+}
+
+List<NavItem> navItemsForUiModules(
+  List<String> modules, {
+  required bool mobile,
+}) {
+  final items = [for (final module in modules) navItemForModule(module)];
+  if (mobile && items.length > 4) {
+    return [
+      ...items.take(4),
+      const NavItem('More', Icons.apps_rounded, '/settings'),
+    ];
+  }
+  return [
+    ...items,
+    const NavItem(
+      'Associations',
+      Icons.account_balance_rounded,
+      '/notifications',
+    ),
+    const NavItem('Settings', Icons.settings_rounded, '/settings'),
+  ];
 }
 
 int navIndexForPath(String path, List<NavItem> items) {
