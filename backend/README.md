@@ -69,6 +69,59 @@ npx prisma db push --skip-generate
 npm run seed
 ```
 
+MongoDB Atlas must allow Render to connect. In Atlas, open `Network Access` and allow Render outbound access. For the simplest Render setup, add:
+
+```text
+0.0.0.0/0
+```
+
+## Live Verification Commands
+
+Backend health:
+
+```bash
+curl https://ai-business-suite.onrender.com/health
+```
+
+Live MongoDB connection:
+
+```bash
+curl https://ai-business-suite.onrender.com/health/db
+```
+
+Expected database result:
+
+```json
+{"ok":true,"database":"connected","hasDatabaseUrl":true,"hasDatabaseName":true}
+```
+
+Demo login test:
+
+```bash
+curl -X POST https://ai-business-suite.onrender.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"grocery@demo.com\",\"password\":\"Password@123\"}"
+```
+
+Flutter web build using the live backend:
+
+```bash
+cd ../frontend
+flutter build web --release
+```
+
+Flutter local Chrome run using the live backend:
+
+```bash
+flutter run -d chrome --dart-define=API_BASE_URL=https://ai-business-suite.onrender.com
+```
+
+Flutter local Chrome run using a local backend:
+
+```bash
+flutter run -d chrome --dart-define=API_BASE_URL=http://127.0.0.1:4000
+```
+
 ## Auth Flow
 
 - Signup -> Company Registration -> Auto Classification -> Personalized Dashboard
