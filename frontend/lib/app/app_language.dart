@@ -1,0 +1,252 @@
+enum AppLanguage {
+  english('English', 'EN'),
+  tamil('தமிழ்', 'TA'),
+  hindi('हिन्दी', 'HI'),
+  malayalam('മലയാളം', 'ML'),
+  telugu('తెలుగు', 'TE'),
+  kannada('ಕನ್ನಡ', 'KN');
+
+  const AppLanguage(this.label, this.shortLabel);
+
+  final String label;
+  final String shortLabel;
+}
+
+const Map<String, Map<AppLanguage, String>> appTranslations = {
+  'Store Dashboard': {
+    AppLanguage.tamil: 'கடை டாஷ்போர்டு',
+    AppLanguage.hindi: 'दुकान डैशबोर्ड',
+    AppLanguage.malayalam: 'കട ഡാഷ്ബോർഡ്',
+    AppLanguage.telugu: 'దుకాణ డాష్‌బోర్డ్',
+    AppLanguage.kannada: 'ಅಂಗಡಿ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+  },
+  'Sale Counter': {
+    AppLanguage.tamil: 'விற்பனை கவுண்டர்',
+    AppLanguage.hindi: 'बिक्री काउंटर',
+    AppLanguage.malayalam: 'വിൽപ്പന കൗണ്ടർ',
+    AppLanguage.telugu: 'అమ్మకపు కౌంటర్',
+    AppLanguage.kannada: 'ಮಾರಾಟ ಕೌಂಟರ್',
+  },
+  'Voice Billing': {
+    AppLanguage.tamil: 'குரல் பில்லிங்',
+    AppLanguage.hindi: 'वॉइस बिलिंग',
+    AppLanguage.malayalam: 'വോയ്സ് ബില്ലിംഗ്',
+    AppLanguage.telugu: 'వాయిస్ బిల్లింగ్',
+    AppLanguage.kannada: 'ವಾಯ್ಸ್ ಬಿಲ್ಲಿಂಗ್',
+  },
+  'Inventory': {
+    AppLanguage.tamil: 'சரக்கு',
+    AppLanguage.hindi: 'इन्वेंटरी',
+    AppLanguage.malayalam: 'ഇൻവെന്ററി',
+    AppLanguage.telugu: 'ఇన్వెంటరీ',
+    AppLanguage.kannada: 'ಇನ್ವೆಂಟರಿ',
+  },
+  'Store Inventory': {
+    AppLanguage.tamil: 'கடை சரக்கு',
+    AppLanguage.hindi: 'दुकान इन्वेंटरी',
+    AppLanguage.malayalam: 'കട ഇൻവെന്ററി',
+    AppLanguage.telugu: 'దుకాణ ఇన్వెంటరీ',
+    AppLanguage.kannada: 'ಅಂಗಡಿ ಇನ್ವೆಂಟರಿ',
+  },
+  'Scan Stock': {
+    AppLanguage.tamil: 'சரக்கு ஸ்கேன்',
+    AppLanguage.hindi: 'स्टॉक स्कैन',
+    AppLanguage.malayalam: 'സ്റ്റോക്ക് സ്കാൻ',
+    AppLanguage.telugu: 'స్టాక్ స్కాన్',
+    AppLanguage.kannada: 'ಸ್ಟಾಕ್ ಸ್ಕ್ಯಾನ್',
+  },
+  'Reports': {
+    AppLanguage.tamil: 'அறிக்கைகள்',
+    AppLanguage.hindi: 'रिपोर्ट',
+    AppLanguage.malayalam: 'റിപ്പോർട്ടുകൾ',
+    AppLanguage.telugu: 'రిపోర్టులు',
+    AppLanguage.kannada: 'ವರದಿಗಳು',
+  },
+  'Settings': {
+    AppLanguage.tamil: 'அமைப்புகள்',
+    AppLanguage.hindi: 'सेटिंग्स',
+    AppLanguage.malayalam: 'ക്രമീകരണങ്ങൾ',
+    AppLanguage.telugu: 'సెట్టింగులు',
+    AppLanguage.kannada: 'ಸೆಟ್ಟಿಂಗ್ಸ್',
+  },
+  'Stock Intake': {
+    AppLanguage.tamil: 'சரக்கு சேர்ப்பு',
+    AppLanguage.hindi: 'स्टॉक जोड़ें',
+    AppLanguage.malayalam: 'സ്റ്റോക്ക് ചേർക്കൽ',
+    AppLanguage.telugu: 'స్టాక్ చేర్పు',
+    AppLanguage.kannada: 'ಸ್ಟಾಕ್ ಸೇರಿಕೆ',
+  },
+  'Scan Invoice': {
+    AppLanguage.tamil: 'இன்வாய்ஸ் ஸ்கேன்',
+    AppLanguage.hindi: 'इनवॉइस स्कैन',
+    AppLanguage.malayalam: 'ഇൻവോയ്സ് സ്കാൻ',
+    AppLanguage.telugu: 'ఇన్వాయిస్ స్కాన్',
+    AppLanguage.kannada: 'ಇನ್ವಾಯ್ಸ್ ಸ್ಕ್ಯಾನ್',
+  },
+  'Start scanning': {
+    AppLanguage.tamil: 'ஸ்கேன் தொடங்கு',
+    AppLanguage.hindi: 'स्कैन शुरू करें',
+    AppLanguage.malayalam: 'സ്കാൻ തുടങ്ങുക',
+    AppLanguage.telugu: 'స్కాన్ ప్రారంభించు',
+    AppLanguage.kannada: 'ಸ್ಕ್ಯಾನ್ ಪ್ರಾರಂಭಿಸಿ',
+  },
+  'Take photo': {
+    AppLanguage.tamil: 'புகைப்படம் எடு',
+    AppLanguage.hindi: 'फोटो लें',
+    AppLanguage.malayalam: 'ഫോട്ടോ എടുക്കുക',
+    AppLanguage.telugu: 'ఫోటో తీయండి',
+    AppLanguage.kannada: 'ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ',
+  },
+  'Pick image': {
+    AppLanguage.tamil: 'படம் தேர்வு',
+    AppLanguage.hindi: 'इमेज चुनें',
+    AppLanguage.malayalam: 'ചിത്രം തിരഞ്ഞെടുക്കുക',
+    AppLanguage.telugu: 'చిత్రం ఎంచుకోండి',
+    AppLanguage.kannada: 'ಚಿತ್ರ ಆಯ್ಕೆ',
+  },
+  'Add to inventory': {
+    AppLanguage.tamil: 'சரக்கில் சேர்க்க',
+    AppLanguage.hindi: 'इन्वेंटरी में जोड़ें',
+    AppLanguage.malayalam: 'ഇൻവെന്ററിയിൽ ചേർക്കുക',
+    AppLanguage.telugu: 'ఇన్వెంటరీలో చేర్చు',
+    AppLanguage.kannada: 'ಇನ್ವೆಂಟರಿಗೆ ಸೇರಿಸಿ',
+  },
+  'Import Excel': {
+    AppLanguage.tamil: 'எக்செல் இறக்கு',
+    AppLanguage.hindi: 'Excel आयात',
+    AppLanguage.malayalam: 'Excel ഇറക്കുമതി',
+    AppLanguage.telugu: 'Excel దిగుమతి',
+    AppLanguage.kannada: 'Excel ಆಮದು',
+  },
+  'Sale deduction': {
+    AppLanguage.tamil: 'விற்பனை கழிப்பு',
+    AppLanguage.hindi: 'बिक्री कटौती',
+    AppLanguage.malayalam: 'വിൽപ്പന കുറവ്',
+    AppLanguage.telugu: 'అమ్మకపు తగ్గింపు',
+    AppLanguage.kannada: 'ಮಾರಾಟ ಕಡಿತ',
+  },
+  'Sample invoices': {
+    AppLanguage.tamil: 'மாதிரி இன்வாய்ஸ்கள்',
+    AppLanguage.hindi: 'नमूना इनवॉइस',
+    AppLanguage.malayalam: 'സാമ്പിൾ ഇൻവോയ്സുകൾ',
+    AppLanguage.telugu: 'నమూనా ఇన్వాయిస్‌లు',
+    AppLanguage.kannada: 'ಮಾದರಿ ಇನ್ವಾಯ್ಸ್‌ಗಳು',
+  },
+  'Language': {
+    AppLanguage.tamil: 'மொழி',
+    AppLanguage.hindi: 'भाषा',
+    AppLanguage.malayalam: 'ഭാഷ',
+    AppLanguage.telugu: 'భాష',
+    AppLanguage.kannada: 'ಭಾಷೆ',
+  },
+  'Filters': {
+    AppLanguage.tamil: 'வடிகட்டி',
+    AppLanguage.hindi: 'फिल्टर',
+    AppLanguage.malayalam: 'ഫിൽട്ടർ',
+    AppLanguage.telugu: 'ఫిల్టర్లు',
+    AppLanguage.kannada: 'ಫಿಲ್ಟರ್',
+  },
+  'Home': {
+    AppLanguage.tamil: 'முகப்பு',
+    AppLanguage.hindi: 'होम',
+    AppLanguage.malayalam: 'ഹോം',
+    AppLanguage.telugu: 'హోమ్',
+    AppLanguage.kannada: 'ಮುಖಪುಟ',
+  },
+  'Stock': {
+    AppLanguage.tamil: 'சரக்கு',
+    AppLanguage.hindi: 'स्टॉक',
+    AppLanguage.malayalam: 'സ്റ്റോക്ക്',
+    AppLanguage.telugu: 'స్టాక్',
+    AppLanguage.kannada: 'ಸ್ಟಾಕ್',
+  },
+  'More': {
+    AppLanguage.tamil: 'மேலும்',
+    AppLanguage.hindi: 'और',
+    AppLanguage.malayalam: 'കൂടുതൽ',
+    AppLanguage.telugu: 'మరిన్ని',
+    AppLanguage.kannada: 'ಇನ್ನಷ್ಟು',
+  },
+  'Translator': {
+    AppLanguage.tamil: 'மொழிபெயர்ப்பு',
+    AppLanguage.hindi: 'अनुवादक',
+    AppLanguage.malayalam: 'പരിഭാഷ',
+    AppLanguage.telugu: 'అనువాదం',
+    AppLanguage.kannada: 'ಅನುವಾದ',
+  },
+  'Printer': {
+    AppLanguage.tamil: 'பிரிண்டர்',
+    AppLanguage.hindi: 'प्रिंटर',
+    AppLanguage.malayalam: 'പ്രിന്റർ',
+    AppLanguage.telugu: 'ప్రింటర్',
+    AppLanguage.kannada: 'ಪ್ರಿಂಟರ್',
+  },
+  'Live invoice scanner': {
+    AppLanguage.tamil: 'நேரடி இன்வாய்ஸ் ஸ்கேனர்',
+    AppLanguage.hindi: 'लाइव इनवॉइस स्कैनर',
+    AppLanguage.malayalam: 'ലൈവ് ഇൻവോയ്സ് സ്കാനർ',
+    AppLanguage.telugu: 'లైవ్ ఇన్వాయిస్ స్కానర్',
+    AppLanguage.kannada: 'ಲೈವ್ ಇನ್ವಾಯ್ಸ್ ಸ್ಕ್ಯಾನರ್',
+  },
+  'Ready': {
+    AppLanguage.tamil: 'தயார்',
+    AppLanguage.hindi: 'तैयार',
+    AppLanguage.malayalam: 'തയ്യാർ',
+    AppLanguage.telugu: 'సిద్ధం',
+    AppLanguage.kannada: 'ಸಿದ್ಧ',
+  },
+  'Scanned': {
+    AppLanguage.tamil: 'ஸ்கேன் முடிந்தது',
+    AppLanguage.hindi: 'स्कैन हुआ',
+    AppLanguage.malayalam: 'സ്കാൻ ചെയ്തു',
+    AppLanguage.telugu: 'స్కాన్ అయింది',
+    AppLanguage.kannada: 'ಸ್ಕ್ಯಾನ್ ಆಯಿತು',
+  },
+  'Review': {
+    AppLanguage.tamil: 'சரிபார்',
+    AppLanguage.hindi: 'जांचें',
+    AppLanguage.malayalam: 'പരിശോധിക്കുക',
+    AppLanguage.telugu: 'పరిశీలించండి',
+    AppLanguage.kannada: 'ಪರಿಶೀಲಿಸಿ',
+  },
+  'Scanned invoice rows': {
+    AppLanguage.tamil: 'ஸ்கேன் செய்யப்பட்ட இன்வாய்ஸ் வரிசைகள்',
+    AppLanguage.hindi: 'स्कैन की गई इनवॉइस पंक्तियां',
+    AppLanguage.malayalam: 'സ്കാൻ ചെയ്ത ഇൻവോയ്സ് വരികൾ',
+    AppLanguage.telugu: 'స్కాన్ చేసిన ఇన్వాయిస్ వరుసలు',
+    AppLanguage.kannada: 'ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಇನ್ವಾಯ್ಸ್ ಸಾಲುಗಳು',
+  },
+  'Product catalog': {
+    AppLanguage.tamil: 'பொருள் பட்டியல்',
+    AppLanguage.hindi: 'प्रोडक्ट सूची',
+    AppLanguage.malayalam: 'ഉൽപ്പന്ന പട്ടിക',
+    AppLanguage.telugu: 'ఉత్పత్తుల జాబితా',
+    AppLanguage.kannada: 'ಉತ್ಪನ್ನ ಪಟ್ಟಿ',
+  },
+  'Sale invoice deduction setup': {
+    AppLanguage.tamil: 'விற்பனை பில் சரக்கு கழிப்பு அமைப்பு',
+    AppLanguage.hindi: 'बिक्री बिल स्टॉक कटौती सेटअप',
+    AppLanguage.malayalam: 'വിൽപ്പന ബിൽ സ്റ്റോക്ക് കുറവ് ക്രമീകരണം',
+    AppLanguage.telugu: 'అమ్మకపు బిల్లు స్టాక్ తగ్గింపు సెటప్',
+    AppLanguage.kannada: 'ಮಾರಾಟ ಬಿಲ್ ಸ್ಟಾಕ್ ಕಡಿತ ಸೆಟಪ್',
+  },
+  'Scanned invoice intake queue': {
+    AppLanguage.tamil: 'ஸ்கேன் இன்வாய்ஸ் சரக்கு வரிசை',
+    AppLanguage.hindi: 'स्कैन इनवॉइस स्टॉक कतार',
+    AppLanguage.malayalam: 'സ്കാൻ ഇൻവോയ്സ് സ്റ്റോക്ക് ക്യൂ',
+    AppLanguage.telugu: 'స్కాన్ ఇన్వాయిస్ స్టాక్ క్యూ',
+    AppLanguage.kannada: 'ಸ್ಕ್ಯಾನ್ ಇನ್ವಾಯ್ಸ್ ಸ್ಟಾಕ್ ಸರದಿ',
+  },
+  'Excel import preview': {
+    AppLanguage.tamil: 'எக்செல் இறக்குமதி முன்னோட்டம்',
+    AppLanguage.hindi: 'Excel आयात पूर्वावलोकन',
+    AppLanguage.malayalam: 'Excel ഇറക്കുമതി പ്രിവ്യൂ',
+    AppLanguage.telugu: 'Excel దిగుమతి ప్రివ్యూ',
+    AppLanguage.kannada: 'Excel ಆಮದು ಪೂರ್ವನೋಟ',
+  },
+};
+
+String appTranslate(String text, AppLanguage language) {
+  if (language == AppLanguage.english) return text;
+  return appTranslations[text]?[language] ?? text;
+}

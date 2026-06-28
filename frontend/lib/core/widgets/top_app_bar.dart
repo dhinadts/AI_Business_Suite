@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/app_language.dart';
 import '../../app/providers.dart';
 import '../../app/theme.dart';
 import '../../features/associations/providers/associations_provider.dart';
@@ -18,12 +19,16 @@ class TopAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final unreadCount = ref.watch(associationsProvider).unreadCount;
+    final language = ref.watch(appLanguageProvider);
     return AppBar(
       toolbarHeight: 72,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+          Text(
+            appTranslate(title, language),
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
           Text(
             'DHINADTS IT SOLUTIONS AND SUPPORT',
             style: Theme.of(context).textTheme.labelSmall,
@@ -31,6 +36,24 @@ class TopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        PopupMenuButton<AppLanguage>(
+          tooltip: appTranslate('Language', language),
+          icon: const Icon(Icons.translate_rounded),
+          onSelected: (value) =>
+              ref.read(appLanguageProvider.notifier).setLanguage(value),
+          itemBuilder: (context) => [
+            for (final item in AppLanguage.values)
+              PopupMenuItem(
+                value: item,
+                child: Row(
+                  children: [
+                    SizedBox(width: 32, child: Text(item.shortLabel)),
+                    Text(item.label),
+                  ],
+                ),
+              ),
+          ],
+        ),
         IconButton(
           onPressed: () => context.go('/ai-assistant'),
           icon: const Icon(Icons.auto_awesome_rounded),
@@ -38,8 +61,12 @@ class TopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
         _NotificationAction(count: unreadCount),
         IconButton(
-          onPressed: () => ref.read(themeModeProvider.notifier).state =
-              themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light,
+          onPressed: () => context.go('/settings'),
+          icon: const Icon(Icons.settings_rounded),
+          tooltip: 'Settings',
+        ),
+        IconButton(
+          onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
           icon: Icon(
             themeMode == ThemeMode.light
                 ? Icons.dark_mode_rounded
@@ -49,10 +76,14 @@ class TopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 16),
-          child: CircleAvatar(
-            backgroundColor: AppColors.orange.withValues(alpha: 0.14),
-            foregroundColor: AppColors.orange,
-            child: const Icon(Icons.person_rounded),
+          child: IconButton.filledTonal(
+            onPressed: () => context.go('/profile'),
+            icon: const Icon(Icons.person_rounded),
+            tooltip: 'Profile',
+            style: IconButton.styleFrom(
+              backgroundColor: AppColors.orange.withValues(alpha: 0.14),
+              foregroundColor: AppColors.orange,
+            ),
           ),
         ),
       ],

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/app_language.dart';
 import '../../app/breakpoints.dart';
 import '../../app/providers.dart';
 import '../../app/theme.dart';
@@ -167,6 +168,7 @@ class SidebarNavigation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final collapsed = ref.watch(sidebarCollapsedProvider);
+    final language = ref.watch(appLanguageProvider);
     final width = collapsed ? 88.0 : 280.0;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
@@ -223,7 +225,7 @@ class SidebarNavigation extends ConsumerWidget {
                         title: collapsed
                             ? null
                             : Text(
-                                item.label,
+                                appTranslate(item.label, language),
                                 style: TextStyle(
                                   color: selected
                                       ? Colors.white
@@ -272,13 +274,24 @@ class BottomNavShell extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final unreadCount = ref.watch(associationsProvider).unreadCount;
+        final language = ref.watch(appLanguageProvider);
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              title,
+              appTranslate(title, language),
               style: const TextStyle(fontWeight: FontWeight.w800),
             ),
             actions: [
+              PopupMenuButton<AppLanguage>(
+                tooltip: appTranslate('Language', language),
+                icon: const Icon(Icons.translate_rounded),
+                onSelected: (value) =>
+                    ref.read(appLanguageProvider.notifier).setLanguage(value),
+                itemBuilder: (context) => [
+                  for (final item in AppLanguage.values)
+                    PopupMenuItem(value: item, child: Text(item.label)),
+                ],
+              ),
               Badge(
                 isLabelVisible: unreadCount > 0,
                 label: Text(unreadCount > 99 ? '99+' : '$unreadCount'),
@@ -286,6 +299,14 @@ class BottomNavShell extends StatelessWidget {
                   onPressed: () => context.go('/notifications'),
                   icon: const Icon(Icons.notifications_none_rounded),
                 ),
+              ),
+              IconButton(
+                onPressed: () => context.go('/settings'),
+                icon: const Icon(Icons.settings_rounded),
+              ),
+              IconButton(
+                onPressed: () => context.go('/profile'),
+                icon: const Icon(Icons.person_rounded),
               ),
             ],
           ),
@@ -306,7 +327,10 @@ class BottomNavShell extends StatelessWidget {
             onDestinationSelected: (index) => context.go(items[index].path),
             destinations: [
               for (final item in items)
-                NavigationDestination(icon: Icon(item.icon), label: item.label),
+                NavigationDestination(
+                  icon: Icon(item.icon),
+                  label: appTranslate(item.label, language),
+                ),
             ],
           ),
         );
@@ -315,7 +339,7 @@ class BottomNavShell extends StatelessWidget {
   }
 }
 
-class TabletNavigationRail extends StatelessWidget {
+class TabletNavigationRail extends ConsumerWidget {
   const TabletNavigationRail({
     super.key,
     required this.title,
@@ -332,8 +356,9 @@ class TabletNavigationRail extends StatelessWidget {
   final Widget? floatingActionButton;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = navIndexForPath(location, items);
+    final language = ref.watch(appLanguageProvider);
     return Scaffold(
       appBar: TopAppBar(title: title),
       floatingActionButton: floatingActionButton,
@@ -347,7 +372,7 @@ class TabletNavigationRail extends StatelessWidget {
               for (final item in items)
                 NavigationRailDestination(
                   icon: Icon(item.icon),
-                  label: Text(item.label),
+                  label: Text(appTranslate(item.label, language)),
                 ),
             ],
           ),

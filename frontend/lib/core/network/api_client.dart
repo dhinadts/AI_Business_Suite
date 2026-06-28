@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 
-import '../storage/secure_storage_service.dart';
+import '../storage/app_local_storage.dart';
 import 'auth_interceptor.dart';
 
 class ApiClient {
-  ApiClient(SecureStorageService storage)
+  ApiClient(AppLocalStorage storage)
     : dio = Dio(
         BaseOptions(
           baseUrl: const String.fromEnvironment(

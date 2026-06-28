@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../app/app_language.dart';
 import '../app/breakpoints.dart';
 import '../app/business_profile.dart';
 import '../app/providers.dart';
@@ -9,10 +12,15 @@ import '../app/theme.dart';
 import '../core/constants/assets.dart';
 import '../core/layout/responsive_scaffold.dart';
 import '../core/models/association_models.dart';
+import '../core/mock_data/models.dart';
 import '../core/mock_data/mock_data.dart';
 import '../core/widgets/brand_logo.dart';
 import '../core/widgets/common_widgets.dart';
+import 'auth/data/auth_repository.dart';
 import 'associations/providers/associations_provider.dart';
+import 'auth/providers/auth_provider.dart';
+import 'billing/grocery_voice_billing_service.dart';
+import 'inventory/invoice_ocr_service.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -701,12 +709,17 @@ class BillingScreen extends ConsumerWidget {
   }
 }
 
-class GrocerySaleScreen extends StatelessWidget {
+class GrocerySaleScreen extends ConsumerWidget {
   const GrocerySaleScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final wide = MediaQuery.sizeOf(context).width >= 880;
+    final billLines = ref.watch(activeBillLinesProvider);
+    final billTotal = billLines.fold<double>(
+      0,
+      (sum, line) => sum + line.total,
+    );
     final saleEntry = FormSectionCard(
       title: 'Grocery sale counter',
       trailing: const StatusChip('Stock auto update'),
@@ -768,28 +781,15 @@ class GrocerySaleScreen extends StatelessWidget {
             DataColumn(label: Text('Qty')),
             DataColumn(label: Text('Total')),
           ],
-          rows: const [
-            DataRow(
-              cells: [
-                DataCell(Text('Rice 5kg')),
-                DataCell(Text('1 bag')),
-                DataCell(Text('₹360')),
-              ],
-            ),
-            DataRow(
-              cells: [
-                DataCell(Text('Milk 500ml')),
-                DataCell(Text('2 pkt')),
-                DataCell(Text('₹64')),
-              ],
-            ),
-            DataRow(
-              cells: [
-                DataCell(Text('Toor Dal')),
-                DataCell(Text('1 kg')),
-                DataCell(Text('₹165')),
-              ],
-            ),
+          rows: [
+            for (final line in billLines)
+              DataRow(
+                cells: [
+                  DataCell(Text(line.product)),
+                  DataCell(Text(_billQuantityLabel(line))),
+                  DataCell(Text('Rs ${line.total.toStringAsFixed(0)}')),
+                ],
+              ),
           ],
         ),
         const SizedBox(height: 12),
@@ -806,9 +806,9 @@ class GrocerySaleScreen extends StatelessWidget {
               label: const Text('Print test'),
             ),
             PrimaryButton(
-              label: 'Save & print ₹589',
+              label: 'Save & print Rs ${billTotal.toStringAsFixed(0)}',
               icon: Icons.receipt_long_rounded,
-              onPressed: () {},
+              onPressed: () => _saveBillAndDeductStock(context, ref),
               accent: true,
             ),
           ],
@@ -840,6 +840,42 @@ class GrocerySaleScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String _billQuantityLabel(VoiceBillLine line) {
+  final quantity = line.quantity.truncateToDouble() == line.quantity
+      ? line.quantity.toStringAsFixed(0)
+      : line.quantity.toStringAsFixed(2);
+  return '$quantity ${line.unit}';
+}
+
+void _saveBillAndDeductStock(BuildContext context, WidgetRef ref) {
+  final billLines = ref.read(activeBillLinesProvider);
+  if (billLines.isEmpty) return;
+  final settings = ref.read(appSettingsProvider);
+  if (!settings.stockDeduction) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Sale bill saved. Stock deduction is off.')),
+    );
+    return;
+  }
+  final products = [...ref.read(inventoryProductsProvider)];
+  for (final line in billLines) {
+    final index = products.indexWhere(
+      (product) => product.name.toLowerCase() == line.product.toLowerCase(),
+    );
+    if (index < 0) continue;
+    final current = products[index];
+    final nextStock = (current.stock - line.quantity.round()).clamp(0, 999999);
+    products[index] = current.copyWith(
+      stock: nextStock,
+      status: nextStock <= 10 ? 'Low stock' : 'In stock',
+    );
+  }
+  ref.read(inventoryProductsProvider.notifier).state = products;
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Sale bill saved. Stock deducted.')),
+  );
 }
 
 class InvoiceListScreen extends ConsumerWidget {
@@ -1175,10 +1211,8 @@ class InventoryScreen extends ConsumerWidget {
           ScreenHeader(
             title: profile.isGrocery
                 ? 'Shelf stock and reorder list'
-                : 'Inventory management',
-            subtitle: profile.isGrocery
-                ? 'Track grocery items, units, sale deduction, scanned supplier bills, store room stock, and low-stock alerts.'
-                : 'Track products, SKU, stock availability, and product details.',
+                : 'Inventory control center',
+            subtitle: _inventorySubtitle(profile),
           ),
           SearchFilterBar(
             hint: profile.isGrocery
@@ -1188,31 +1222,39 @@ class InventoryScreen extends ConsumerWidget {
             onAction: () {},
           ),
           const SizedBox(height: 16),
-          if (profile.isGrocery) ...[
-            ModuleGrid(
-              modules: [
-                ModuleCard(
-                  title: 'Stock intake',
-                  subtitle: 'Add supplier invoice items by unit',
-                  icon: Icons.inventory_rounded,
-                  onTap: () => context.go('/inventory/stock-intake'),
-                ),
-                ModuleCard(
-                  title: 'Scan invoice',
-                  subtitle: 'OCR supplier bill into inventory',
-                  icon: Icons.document_scanner_rounded,
-                  onTap: () => context.go('/ocr-upload'),
-                ),
-                ModuleCard(
-                  title: 'Sale deduction',
-                  subtitle: 'Every saved bill reduces shelf stock',
-                  icon: Icons.point_of_sale_rounded,
-                  onTap: () => context.go('/billing/stall-sale'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-          ],
+          ModuleGrid(
+            modules: [
+              ModuleCard(
+                title: 'Stock intake',
+                subtitle: 'Manual and bulk supplier invoice entry',
+                icon: Icons.inventory_rounded,
+                onTap: () => context.go('/inventory/stock-intake'),
+              ),
+              ModuleCard(
+                title: 'Scan invoice',
+                subtitle: 'OCR invoice items into stock intake',
+                icon: Icons.document_scanner_rounded,
+                onTap: () => context.go('/ocr-upload'),
+              ),
+              ModuleCard(
+                title: 'Import Excel',
+                subtitle: 'Upload spreadsheet rows into stock intake',
+                icon: Icons.table_view_rounded,
+                onTap: () => context.go('/inventory/stock-intake'),
+              ),
+              ModuleCard(
+                title: 'Sale deduction',
+                subtitle: _deductionActionText(profile),
+                icon: Icons.sync_alt_rounded,
+                onTap: () => profile.isGrocery
+                    ? context.go('/billing/stall-sale')
+                    : context.go('/billing/create'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const _SaleDeductionRulesCard(),
+          const SizedBox(height: 16),
           Breakpoints.isTablet(context)
               ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1231,15 +1273,35 @@ class InventoryScreen extends ConsumerWidget {
   }
 }
 
-class StockIntakeScreen extends StatelessWidget {
+String _inventorySubtitle(BusinessProfile profile) {
+  return switch (profile) {
+    BusinessProfile.groceryStore =>
+      'Track grocery items, units, sale deduction, scanned supplier bills, store room stock, and low-stock alerts.',
+    BusinessProfile.smallRegistered =>
+      'Add purchase invoices, Excel stock sheets, sale deductions, and low-stock controls for every customer invoice.',
+    BusinessProfile.mediumRegistered =>
+      'Manage supplier invoices, purchase batches, Excel imports, warehouse stock, and invoice-based deductions.',
+    BusinessProfile.largeRegistered =>
+      'Control branch inventory, procurement invoice intake, Excel bulk uploads, reservations, and sale deductions.',
+  };
+}
+
+String _deductionActionText(BusinessProfile profile) {
+  return profile.isGrocery
+      ? 'Every saved bill reduces shelf stock'
+      : 'Customer invoices reserve or deduct mapped stock';
+}
+
+class StockIntakeScreen extends ConsumerWidget {
   const StockIntakeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(businessProfileProvider);
     final wide = MediaQuery.sizeOf(context).width >= 900;
     final intakeForm = FormSectionCard(
       title: 'Supplier invoice stock intake',
-      trailing: const StatusChip('Store room'),
+      trailing: StatusChip(profile.isGrocery ? 'Store room' : 'Inventory'),
       children: const [
         Wrap(
           spacing: 12,
@@ -1286,6 +1348,8 @@ class StockIntakeScreen extends StatelessWidget {
             SizedBox(width: 140, child: AppTextField(label: 'MRP')),
           ],
         ),
+        SizedBox(height: 14),
+        _BulkIntakeActions(),
       ],
     );
     final flow = FormSectionCard(
@@ -1316,11 +1380,22 @@ class StockIntakeScreen extends StatelessWidget {
               'Saved customer bills reduce stock and trigger low-stock alerts.',
         ),
         const SizedBox(height: 12),
-        PrimaryButton(
-          label: 'Scan supplier invoice',
-          icon: Icons.document_scanner_rounded,
-          onPressed: () => context.go('/ocr-upload'),
-          accent: true,
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            PrimaryButton(
+              label: 'Scan supplier invoice',
+              icon: Icons.document_scanner_rounded,
+              onPressed: () => context.go('/ocr-upload'),
+              accent: true,
+            ),
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.table_view_rounded),
+              label: const Text('Import Excel sheet'),
+            ),
+          ],
         ),
       ],
     );
@@ -1332,7 +1407,7 @@ class StockIntakeScreen extends StatelessWidget {
           const ScreenHeader(
             title: 'Inventory from supplier bills',
             subtitle:
-                'Add purchase invoice products into store room stock, then sell by exact unit at the counter.',
+                'Add purchase invoice products into stock, bulk upload invoice rows, import Excel sheets, and deduct stock from sale invoices.',
           ),
           if (wide)
             Row(
@@ -1345,8 +1420,143 @@ class StockIntakeScreen extends StatelessWidget {
             )
           else
             Column(children: [intakeForm, const SizedBox(height: 16), flow]),
+          const SizedBox(height: 16),
+          const _StockIntakeReviewTables(),
+          const SizedBox(height: 16),
+          const _SaleDeductionRulesCard(),
         ],
       ),
+    );
+  }
+}
+
+class _BulkIntakeActions extends StatelessWidget {
+  const _BulkIntakeActions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        PrimaryButton(
+          label: 'Bulk add invoice rows',
+          icon: Icons.playlist_add_check_rounded,
+          onPressed: () {},
+          accent: true,
+        ),
+        OutlinedButton.icon(
+          onPressed: () => context.go('/ocr-upload'),
+          icon: const Icon(Icons.document_scanner_rounded),
+          label: const Text('Scan invoice'),
+        ),
+        OutlinedButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.upload_file_rounded),
+          label: const Text('Import Excel'),
+        ),
+      ],
+    );
+  }
+}
+
+class _StockIntakeReviewTables extends ConsumerWidget {
+  const _StockIntakeReviewTables();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final intakeItems = ref.watch(stockIntakeItemsProvider);
+    return Column(
+      children: [
+        _StockIntakeTable(
+          title: 'Scanned invoice intake queue',
+          items: intakeItems,
+          status: 'OCR bulk upload',
+        ),
+        const SizedBox(height: 16),
+        const _StockIntakeTable(
+          title: 'Excel import preview',
+          items: excelStockIntakeItems,
+          status: 'Spreadsheet mapped',
+        ),
+      ],
+    );
+  }
+}
+
+class _StockIntakeTable extends StatelessWidget {
+  const _StockIntakeTable({
+    required this.title,
+    required this.items,
+    required this.status,
+  });
+
+  final String title;
+  final List<StockIntakeItem> items;
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    return DataTableCard(
+      title: title,
+      trailing: StatusChip(status),
+      columns: const [
+        DataColumn(label: Text('Product')),
+        DataColumn(label: Text('Invoice')),
+        DataColumn(label: Text('Qty')),
+        DataColumn(label: Text('Rate')),
+        DataColumn(label: Text('Destination')),
+        DataColumn(label: Text('Status')),
+      ],
+      rows: [
+        for (final item in items)
+          DataRow(
+            cells: [
+              DataCell(Text(item.product)),
+              DataCell(Text(item.invoice)),
+              DataCell(Text(_quantityLabel(item))),
+              DataCell(Text('Rs ${item.purchaseRate.toStringAsFixed(0)}')),
+              DataCell(Text(item.destination)),
+              DataCell(StatusChip(item.status)),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+String _quantityLabel(StockIntakeItem item) {
+  final value = item.quantity.truncateToDouble() == item.quantity
+      ? item.quantity.toStringAsFixed(0)
+      : item.quantity.toStringAsFixed(2);
+  return '$value ${item.unit}';
+}
+
+class _SaleDeductionRulesCard extends StatelessWidget {
+  const _SaleDeductionRulesCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return DataTableCard(
+      title: 'Sale invoice deduction setup',
+      trailing: const StatusChip('All invoices'),
+      columns: const [
+        DataColumn(label: Text('Invoice')),
+        DataColumn(label: Text('Source')),
+        DataColumn(label: Text('Deduction rule')),
+        DataColumn(label: Text('Status')),
+      ],
+      rows: [
+        for (final rule in saleDeductionRules)
+          DataRow(
+            cells: [
+              DataCell(Text(rule.invoiceType)),
+              DataCell(Text(rule.stockSource)),
+              DataCell(Text(rule.deduction)),
+              DataCell(StatusChip(rule.status)),
+            ],
+          ),
+      ],
     );
   }
 }
@@ -1358,6 +1568,7 @@ class _ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final inventoryProducts = ref.watch(inventoryProductsProvider);
     return DataTableCard(
       title: 'Product catalog',
       columns: const [
@@ -1368,7 +1579,7 @@ class _ProductList extends StatelessWidget {
         DataColumn(label: Text('Status')),
       ],
       rows: [
-        for (final product in products)
+        for (final product in inventoryProducts)
           DataRow(
             onSelectChanged: (_) {
               ref.read(selectedProductProvider.notifier).state = product;
@@ -1815,16 +2026,71 @@ class ProfitLossScreen extends StatelessWidget {
   }
 }
 
-class AiAssistantScreen extends ConsumerWidget {
+class AiAssistantScreen extends ConsumerStatefulWidget {
   const AiAssistantScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AiAssistantScreen> createState() => _AiAssistantScreenState();
+}
+
+class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
+  final _controller = TextEditingController();
+  final _speech = stt.SpeechToText();
+  bool _listening = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _send(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    final messages = [...ref.read(aiChatMessagesProvider)];
+    messages.add(ChatMessage('You', trimmed));
+    messages.add(ChatMessage('AI', _groceryAiReply(trimmed), isAi: true));
+    ref.read(aiChatMessagesProvider.notifier).state = messages;
+    _controller.clear();
+  }
+
+  Future<void> _toggleVoice() async {
+    if (_listening) {
+      await _speech.stop();
+      setState(() => _listening = false);
+      return;
+    }
+    final available = await _speech.initialize();
+    if (!available) return;
+    setState(() => _listening = true);
+    final parser = GroceryVoiceBillingService();
+    await _speech.listen(
+      listenOptions: stt.SpeechListenOptions(
+        partialResults: true,
+        localeId: parser.localeFor(ref.read(appLanguageProvider)),
+      ),
+      onResult: (result) {
+        _controller.text = result.recognizedWords;
+        _controller.selection = TextSelection.collapsed(
+          offset: _controller.text.length,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final messages = ref.watch(aiChatMessagesProvider);
     return AppScaffold(
       title: 'AI Assistant',
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const ScreenHeader(
+            title: 'Grocery GST and billing assistant',
+            subtitle:
+                'Ask by voice or typing about GSTR filing, daily sales, low stock, printer buying, and grocery billing.',
+          ),
           for (final message in messages)
             Align(
               alignment: message.isAi
@@ -1856,23 +2122,53 @@ class AiAssistantScreen extends ConsumerWidget {
               ),
             ),
           const SizedBox(height: 10),
+          const _PrinterRecommendationCard(),
+          const SizedBox(height: 16),
           FormSectionCard(
-            title: 'Ask AI',
+            title: 'Ask AI by voice or typing',
             children: [
-              const AppTextField(
-                label: 'Message',
-                hint: 'Ask about invoices, GST, stock, or customers',
-                icon: Icons.auto_awesome_rounded,
+              TextField(
+                controller: _controller,
+                minLines: 1,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Message',
+                  hintText:
+                      'Ask: GST filing help, today sales, low stock, printer suggestion',
+                  prefixIcon: Icon(Icons.auto_awesome_rounded),
+                ),
               ),
               const SizedBox(height: 12),
-              Align(
-                alignment: Alignment.centerRight,
-                child: PrimaryButton(
-                  label: 'Send',
-                  icon: Icons.send_rounded,
-                  onPressed: () {},
-                  accent: true,
-                ),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: WrapAlignment.end,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _toggleVoice,
+                    icon: Icon(
+                      _listening ? Icons.stop_rounded : Icons.mic_rounded,
+                    ),
+                    label: Text(_listening ? 'Stop voice' : 'Voice'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => _send('Which printer should I buy?'),
+                    icon: const Icon(Icons.print_rounded),
+                    label: const Text('Printer advice'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () =>
+                        _send('Help me file GST for grocery sales'),
+                    icon: const Icon(Icons.fact_check_rounded),
+                    label: const Text('GST filing'),
+                  ),
+                  PrimaryButton(
+                    label: 'Send',
+                    icon: Icons.send_rounded,
+                    onPressed: () => _send(_controller.text),
+                    accent: true,
+                  ),
+                ],
               ),
             ],
           ),
@@ -1898,6 +2194,8 @@ class OcrUploadScreen extends StatelessWidget {
             subtitle:
                 'Capture product names, packet sizes, quantities, MRP, purchase price, and GST from a paper bill or uploaded image.',
           ),
+          const _LiveInvoiceScanner(),
+          const SizedBox(height: 16),
           if (wide)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1919,8 +2217,286 @@ class OcrUploadScreen extends StatelessWidget {
                 const _ScanRulesCard(),
               ],
             ),
+          const SizedBox(height: 16),
+          FormSectionCard(
+            title: 'Other stock intake imports',
+            children: [
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => context.go('/inventory/stock-intake'),
+                    icon: const Icon(Icons.table_view_rounded),
+                    label: const Text('Import Excel sheet'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => context.go('/inventory/stock-intake'),
+                    icon: const Icon(Icons.playlist_add_rounded),
+                    label: const Text('Manual bulk intake'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const _SampleInvoicesCard(),
         ],
       ),
+    );
+  }
+}
+
+String _groceryAiReply(String message) {
+  final lower = message.toLowerCase();
+  if (lower.contains('printer')) {
+    return 'For a new grocery shop: start with a low-cost 58mm Bluetooth printer. If daily bills are high, choose an 80mm LAN/Wi-Fi model. For long life, prefer TVS RP 3200 Plus or Epson TM-T82III.';
+  }
+  if (lower.contains('gst') ||
+      lower.contains('filing') ||
+      lower.contains('gstr')) {
+    return 'For GST filing: keep all sale invoices, purchase invoices, HSN/GST rates, and payment totals ready. Review outward sales for GSTR-1, purchase ITC for GSTR-3B, then match totals before filing.';
+  }
+  if (lower.contains('stock') || lower.contains('inventory')) {
+    return 'Stock flow: scan supplier invoice to add inventory, create sale bill by voice or typing, then stock deducts on save. Check low-stock items daily before closing.';
+  }
+  if (lower.contains('bill') || lower.contains('voice')) {
+    return 'Use the Voice Billing tab, select language from the translate icon, speak grocery items, review the bill, then save and print. The same bill reduces stock.';
+  }
+  return 'I can help with grocery billing, stock, GST filing readiness, printer selection, and daily shop reports. Ask in voice or typing.';
+}
+
+class _LiveInvoiceScanner extends ConsumerStatefulWidget {
+  const _LiveInvoiceScanner();
+
+  @override
+  ConsumerState<_LiveInvoiceScanner> createState() =>
+      _LiveInvoiceScannerState();
+}
+
+class _LiveInvoiceScannerState extends ConsumerState<_LiveInvoiceScanner> {
+  final _picker = ImagePicker();
+  final _ocr = InvoiceOcrService();
+  List<StockIntakeItem> _detectedItems = [];
+  String _rawText = '';
+  String? _imagePath;
+  bool _scanning = false;
+  String? _error;
+
+  Future<void> _scan(ImageSource source) async {
+    setState(() {
+      _scanning = true;
+      _error = null;
+    });
+    try {
+      final image = await _picker.pickImage(
+        source: source,
+        imageQuality: 92,
+        maxWidth: 1800,
+      );
+      if (image == null) {
+        setState(() => _scanning = false);
+        return;
+      }
+      final result = await _ocr.scanImage(image.path);
+      setState(() {
+        _imagePath = image.path;
+        _rawText = result.rawText;
+        _detectedItems = result.items;
+      });
+    } catch (error) {
+      setState(() {
+        _error = error.toString();
+      });
+    } finally {
+      if (mounted) setState(() => _scanning = false);
+    }
+  }
+
+  void _addToInventory() {
+    if (_detectedItems.isEmpty) return;
+    final existingItems = ref.read(stockIntakeItemsProvider);
+    ref.read(stockIntakeItemsProvider.notifier).state = [
+      ..._detectedItems,
+      ...existingItems,
+    ];
+    final products = [...ref.read(inventoryProductsProvider)];
+    for (final item in _detectedItems) {
+      final index = products.indexWhere(
+        (product) => product.name.toLowerCase() == item.product.toLowerCase(),
+      );
+      final addQty = item.quantity.round();
+      if (index >= 0) {
+        final current = products[index];
+        products[index] = current.copyWith(
+          stock: current.stock + addQty,
+          price: item.salePrice > 0 ? item.salePrice : current.price,
+          status: 'In stock',
+        );
+      } else {
+        products.add(
+          Product(
+            item.product,
+            _skuFor(item.product),
+            addQty,
+            item.salePrice,
+            'In stock',
+          ),
+        );
+      }
+    }
+    ref.read(inventoryProductsProvider.notifier).state = products;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${_detectedItems.length} items added to stock')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final language = ref.watch(appLanguageProvider);
+    return FormSectionCard(
+      title: 'Live invoice scanner',
+      trailing: StatusChip(_detectedItems.isEmpty ? 'Ready' : 'Scanned'),
+      children: [
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            PrimaryButton(
+              label: 'Take photo',
+              icon: Icons.camera_alt_rounded,
+              onPressed: () => _scan(ImageSource.camera),
+              accent: true,
+            ),
+            OutlinedButton.icon(
+              onPressed: () => _scan(ImageSource.gallery),
+              icon: const Icon(Icons.photo_library_rounded),
+              label: Text(appTranslate('Pick image', language)),
+            ),
+            PrimaryButton(
+              label: 'Add to inventory',
+              icon: Icons.inventory_rounded,
+              onPressed: _detectedItems.isEmpty ? () {} : _addToInventory,
+            ),
+          ],
+        ),
+        if (_scanning) ...[
+          const SizedBox(height: 14),
+          const LinearProgressIndicator(),
+        ],
+        if (_error != null) ...[
+          const SizedBox(height: 14),
+          Text(
+            _error!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
+        if (_imagePath != null) ...[
+          const SizedBox(height: 14),
+          Text('Selected image: $_imagePath'),
+        ],
+        if (_detectedItems.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          _StockIntakeTable(
+            title: 'Scanned invoice rows',
+            items: _detectedItems,
+            status: 'Review',
+          ),
+        ],
+        if (_rawText.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: const Text('OCR text'),
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: SelectableText(_rawText),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+String _skuFor(String productName) {
+  final compact = productName
+      .toUpperCase()
+      .replaceAll(RegExp(r'[^A-Z0-9]+'), '-')
+      .replaceAll(RegExp(r'^-|-$'), '');
+  if (compact.isEmpty) return 'GRC-ITEM';
+  final end = compact.length > 18 ? 18 : compact.length;
+  return 'GRC-${compact.substring(0, end)}';
+}
+
+class _SampleInvoicesCard extends StatelessWidget {
+  const _SampleInvoicesCard();
+
+  static const samples = [
+    ('English', 'assets/sample_invoices/sample_invoice_english.png'),
+    ('हिन्दी', 'assets/sample_invoices/sample_invoice_hindi.png'),
+    ('தமிழ்', 'assets/sample_invoices/sample_invoice_tamil.png'),
+    ('മലയാളം', 'assets/sample_invoices/sample_invoice_malayalam.png'),
+    ('తెలుగు', 'assets/sample_invoices/sample_invoice_telugu.png'),
+    ('ಕನ್ನಡ', 'assets/sample_invoices/sample_invoice_kannada.png'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return FormSectionCard(
+      title: 'Sample invoices',
+      children: [
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: samples.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: MediaQuery.sizeOf(context).width >= 900 ? 3 : 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            mainAxisExtent: 190,
+          ),
+          itemBuilder: (context, index) {
+            final sample = samples[index];
+            return InkWell(
+              onTap: () => showDialog<void>(
+                context: context,
+                builder: (context) => Dialog(
+                  child: InteractiveViewer(
+                    child: Image.asset(sample.$2, fit: BoxFit.contain),
+                  ),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.asset(sample.$2, fit: BoxFit.cover),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Container(
+                        width: double.infinity,
+                        color: Colors.black.withValues(alpha: 0.62),
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          sample.$1,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -2120,36 +2696,157 @@ class VoiceBillingScreen extends ConsumerWidget {
   }
 }
 
-class VoiceActiveScreen extends StatelessWidget {
+class VoiceActiveScreen extends ConsumerStatefulWidget {
   const VoiceActiveScreen({super.key});
 
   @override
+  ConsumerState<VoiceActiveScreen> createState() => _VoiceActiveScreenState();
+}
+
+class _VoiceActiveScreenState extends ConsumerState<VoiceActiveScreen> {
+  final _speech = stt.SpeechToText();
+  final _parser = GroceryVoiceBillingService();
+  final _typedController = TextEditingController();
+  bool _available = false;
+  bool _listening = false;
+  String _heardText = '';
+
+  @override
+  void dispose() {
+    _typedController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _startListening() async {
+    final language = ref.read(appLanguageProvider);
+    _available = await _speech.initialize();
+    if (!_available) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Voice input is not available.')),
+        );
+      }
+      return;
+    }
+    setState(() => _listening = true);
+    await _speech.listen(
+      listenOptions: stt.SpeechListenOptions(
+        partialResults: true,
+        localeId: _parser.localeFor(language),
+      ),
+      onResult: (result) {
+        setState(() => _heardText = result.recognizedWords);
+        _parseAndStore(result.recognizedWords);
+      },
+    );
+  }
+
+  Future<void> _stopListening() async {
+    await _speech.stop();
+    setState(() => _listening = false);
+  }
+
+  void _parseAndStore(String text) {
+    final lines = _parser.parse(text, ref.read(appLanguageProvider));
+    ref.read(activeBillTranscriptProvider.notifier).state = text;
+    if (lines.isNotEmpty) {
+      ref.read(activeBillLinesProvider.notifier).state = lines;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final language = ref.watch(appLanguageProvider);
+    final billLines = ref.watch(activeBillLinesProvider);
     return AppScaffold(
       title: 'Listening',
       child: FormSectionCard(
-        title: 'Active listening',
+        title: 'Active grocery voice billing',
         children: [
-          const Center(
+          Center(
             child: Icon(
-              Icons.graphic_eq_rounded,
+              _listening ? Icons.graphic_eq_rounded : Icons.mic_rounded,
               size: 96,
-              color: AppColors.orange,
+              color: _listening ? AppColors.orange : AppColors.teal,
             ),
           ),
-          const EmptyState(
-            title: 'Capturing grocery items',
-            message: 'Do kilo chawal, ek litre oil, teen milk packet...',
+          EmptyState(
+            title: _listening
+                ? 'Listening in ${language.label}'
+                : 'Ready to bill',
+            message: _heardText.isEmpty
+                ? 'Say items like: two milk, one rice, rendu paal, do chawal.'
+                : _heardText,
             icon: Icons.hearing_rounded,
           ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _typedController,
+            decoration: const InputDecoration(
+              labelText: 'Type grocery bill if voice is noisy',
+              prefixIcon: Icon(Icons.keyboard_rounded),
+            ),
+            onChanged: _parseAndStore,
+          ),
+          const SizedBox(height: 16),
+          if (billLines.isNotEmpty)
+            _VoiceBillLinesTable(title: 'Current voice bill', lines: billLines),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              PrimaryButton(
+                label: _listening ? 'Stop listening' : 'Start listening',
+                icon: _listening ? Icons.stop_rounded : Icons.mic_rounded,
+                onPressed: _listening ? _stopListening : _startListening,
+                accent: true,
+              ),
+              OutlinedButton.icon(
+                onPressed: () {
+                  _parseAndStore(_typedController.text);
+                  context.go('/voice-billing/review');
+                },
+                icon: const Icon(Icons.rate_review_rounded),
+                label: const Text('Review voice bill'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class VoiceReviewScreen extends ConsumerWidget {
+  const VoiceReviewScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lines = ref.watch(activeBillLinesProvider);
+    final transcript = ref.watch(activeBillTranscriptProvider);
+    return AppScaffold(
+      title: 'Voice Bill Review',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (transcript.isNotEmpty)
+            FormSectionCard(
+              title: 'Captured voice text',
+              children: [SelectableText(transcript)],
+            ),
+          if (transcript.isNotEmpty) const SizedBox(height: 16),
+          _VoiceBillLinesTable(title: 'Captured grocery sale', lines: lines),
           const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerRight,
             child: PrimaryButton(
-              label: 'Review voice bill',
-              icon: Icons.rate_review_rounded,
-              onPressed: () => context.go('/voice-billing/review'),
-              accent: true,
+              label: 'Create sale bill & reduce stock',
+              icon: Icons.receipt_long_rounded,
+              onPressed: () {
+                _saveBillAndDeductStock(context, ref);
+                context.go('/billing/stall-sale');
+              },
             ),
           ),
         ],
@@ -2158,57 +2855,35 @@ class VoiceActiveScreen extends StatelessWidget {
   }
 }
 
-class VoiceReviewScreen extends StatelessWidget {
-  const VoiceReviewScreen({super.key});
+class _VoiceBillLinesTable extends StatelessWidget {
+  const _VoiceBillLinesTable({required this.title, required this.lines});
+
+  final String title;
+  final List<VoiceBillLine> lines;
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      title: 'Voice Bill Review',
-      child: Column(
-        children: [
-          DataTableCard(
-            title: 'Captured grocery sale',
-            columns: const [
-              DataColumn(label: Text('Item')),
-              DataColumn(label: Text('Qty')),
-              DataColumn(label: Text('Rate')),
-            ],
-            rows: const [
-              DataRow(
-                cells: [
-                  DataCell(Text('Rice Sona Masoori')),
-                  DataCell(Text('2 kg')),
-                  DataCell(Text('₹144')),
-                ],
-              ),
-              DataRow(
-                cells: [
-                  DataCell(Text('Sunflower Oil')),
-                  DataCell(Text('1 litre')),
-                  DataCell(Text('₹142')),
-                ],
-              ),
-              DataRow(
-                cells: [
-                  DataCell(Text('Milk packet')),
-                  DataCell(Text('3')),
-                  DataCell(Text('₹96')),
-                ],
-              ),
+    final total = lines.fold<double>(0, (sum, line) => sum + line.total);
+    return DataTableCard(
+      title: title,
+      trailing: StatusChip('Rs ${total.toStringAsFixed(0)}'),
+      columns: const [
+        DataColumn(label: Text('Item')),
+        DataColumn(label: Text('Qty')),
+        DataColumn(label: Text('Rate')),
+        DataColumn(label: Text('Total')),
+      ],
+      rows: [
+        for (final line in lines)
+          DataRow(
+            cells: [
+              DataCell(Text(line.product)),
+              DataCell(Text(_billQuantityLabel(line))),
+              DataCell(Text('Rs ${line.rate.toStringAsFixed(0)}')),
+              DataCell(Text('Rs ${line.total.toStringAsFixed(0)}')),
             ],
           ),
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.centerRight,
-            child: PrimaryButton(
-              label: 'Create sale bill & reduce stock',
-              icon: Icons.receipt_long_rounded,
-              onPressed: () => context.go('/billing/stall-sale'),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 }
@@ -2322,12 +2997,12 @@ class PrinterSetupScreen extends StatelessWidget {
       children: [
         _PrinterStatusTile(
           title: 'Bluetooth printer',
-          subtitle: 'MTP-II thermal printer nearby',
+          subtitle: 'Pair mobile 58mm/80mm thermal printers from Android',
           status: 'Pair',
         ),
         _PrinterStatusTile(
           title: 'Wi-Fi printer',
-          subtitle: '192.168.1.42 on store network',
+          subtitle: 'Use LAN/Wi-Fi ESC/POS printers on the store router',
           status: 'Connected',
         ),
         _PrinterStatusTile(
@@ -2366,6 +3041,7 @@ class PrinterSetupScreen extends StatelessWidget {
         ),
       ],
     );
+    const recommendations = _PrinterRecommendationCard();
     return AppScaffold(
       title: 'Printer Setup',
       child: Column(
@@ -2387,68 +3063,423 @@ class PrinterSetupScreen extends StatelessWidget {
             )
           else
             Column(children: [printers, const SizedBox(height: 16), testPrint]),
+          const SizedBox(height: 16),
+          recommendations,
         ],
       ),
     );
   }
 }
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class _PrinterRecommendationCard extends StatelessWidget {
+  const _PrinterRecommendationCard();
 
   @override
   Widget build(BuildContext context) {
+    return DataTableCard(
+      title: 'Printer suggestions for grocery shops',
+      trailing: const StatusChip('Cheap to long life'),
+      columns: const [
+        DataColumn(label: Text('Printer')),
+        DataColumn(label: Text('Range')),
+        DataColumn(label: Text('Connectivity')),
+        DataColumn(label: Text('Best for')),
+        DataColumn(label: Text('Note')),
+      ],
+      rows: [
+        for (final printer in printerRecommendations)
+          DataRow(
+            cells: [
+              DataCell(Text(printer.name)),
+              DataCell(Text(printer.range)),
+              DataCell(Text(printer.connectivity)),
+              DataCell(Text(printer.bestFor)),
+              DataCell(Text(printer.note)),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+class SettingsScreen extends ConsumerWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final language = ref.watch(appLanguageProvider);
+    final settings = ref.watch(appSettingsProvider);
     return AppScaffold(
       title: 'Settings',
-      child: ModuleGrid(
-        modules: [
-          ModuleCard(
-            title: 'Team roles',
-            subtitle: 'Permissions and staff access',
-            icon: Icons.admin_panel_settings_rounded,
-            onTap: () => context.go('/settings/team-roles'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ScreenHeader(
+            title: 'Workspace settings',
+            subtitle:
+                'Control login persistence, app language, theme, billing print behavior, and stock deduction.',
           ),
-          ModuleCard(
-            title: 'Add member',
-            subtitle: 'Invite a team member',
-            icon: Icons.person_add_alt_rounded,
-            onTap: () => context.go('/settings/add-team-member'),
+          FormSectionCard(
+            title: 'App controls',
+            children: [
+              SegmentedButton<ThemeMode>(
+                segments: const [
+                  ButtonSegment(
+                    value: ThemeMode.light,
+                    icon: Icon(Icons.light_mode_rounded),
+                    label: Text('Light'),
+                  ),
+                  ButtonSegment(
+                    value: ThemeMode.dark,
+                    icon: Icon(Icons.dark_mode_rounded),
+                    label: Text('Dark'),
+                  ),
+                  ButtonSegment(
+                    value: ThemeMode.system,
+                    icon: Icon(Icons.settings_suggest_rounded),
+                    label: Text('System'),
+                  ),
+                ],
+                selected: {themeMode},
+                onSelectionChanged: (value) =>
+                    ref.read(themeModeProvider.notifier).setMode(value.first),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<AppLanguage>(
+                initialValue: language,
+                decoration: const InputDecoration(
+                  labelText: 'App language',
+                  prefixIcon: Icon(Icons.translate_rounded),
+                ),
+                items: [
+                  for (final item in AppLanguage.values)
+                    DropdownMenuItem(value: item, child: Text(item.label)),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    ref.read(appLanguageProvider.notifier).setLanguage(value);
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: settings.receiptWidth,
+                decoration: const InputDecoration(
+                  labelText: 'Default receipt format',
+                  prefixIcon: Icon(Icons.receipt_long_rounded),
+                ),
+                items: const [
+                  DropdownMenuItem(value: '58mm', child: Text('58mm')),
+                  DropdownMenuItem(value: '80mm', child: Text('80mm')),
+                  DropdownMenuItem(
+                    value: 'A5 invoice',
+                    child: Text('A5 invoice'),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    ref
+                        .read(appSettingsProvider.notifier)
+                        .setReceiptWidth(value);
+                  }
+                },
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Auto print after sale bill'),
+                subtitle: const Text('Use the selected receipt format.'),
+                value: settings.autoPrint,
+                onChanged: (value) =>
+                    ref.read(appSettingsProvider.notifier).setAutoPrint(value),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Deduct stock on saved sale bills'),
+                subtitle: const Text('Recommended for grocery counters.'),
+                value: settings.stockDeduction,
+                onChanged: (value) => ref
+                    .read(appSettingsProvider.notifier)
+                    .setStockDeduction(value),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  await ref.read(authProvider.notifier).logout();
+                  if (context.mounted) context.go('/login');
+                },
+                icon: const Icon(Icons.logout_rounded),
+                label: const Text('Log out'),
+              ),
+            ],
           ),
-          ModuleCard(
-            title: 'User management',
-            subtitle: 'Manage users and status',
-            icon: Icons.manage_accounts_rounded,
-            onTap: () => context.go('/settings/users'),
+          const SizedBox(height: 16),
+          ModuleGrid(
+            modules: [
+              ModuleCard(
+                title: 'Team roles',
+                subtitle: 'Permissions and staff access',
+                icon: Icons.admin_panel_settings_rounded,
+                onTap: () => context.go('/settings/team-roles'),
+              ),
+              ModuleCard(
+                title: 'Add member',
+                subtitle: 'Invite a team member',
+                icon: Icons.person_add_alt_rounded,
+                onTap: () => context.go('/settings/add-team-member'),
+              ),
+              ModuleCard(
+                title: 'User management',
+                subtitle: 'Manage users and status',
+                icon: Icons.manage_accounts_rounded,
+                onTap: () => context.go('/settings/users'),
+              ),
+              ModuleCard(
+                title: 'Translator',
+                subtitle: 'Regional grocery item translation',
+                icon: Icons.translate_rounded,
+                onTap: () => context.go('/translator'),
+              ),
+              ModuleCard(
+                title: 'Printer setup',
+                subtitle: 'Wi-Fi and Bluetooth billing printers',
+                icon: Icons.print_rounded,
+                onTap: () => context.go('/printer-setup'),
+              ),
+              ModuleCard(
+                title: 'Profile',
+                subtitle: 'Company and user profile',
+                icon: Icons.badge_rounded,
+                onTap: () => context.go('/profile'),
+              ),
+              ModuleCard(
+                title: 'Subscription',
+                subtitle: 'Pricing placeholder',
+                icon: Icons.workspace_premium_rounded,
+                onTap: () => context.go('/subscription'),
+              ),
+              ModuleCard(
+                title: 'Help/support',
+                subtitle: 'Support knowledge base',
+                icon: Icons.support_agent_rounded,
+                onTap: () => context.go('/help'),
+              ),
+            ],
           ),
-          ModuleCard(
-            title: 'Translator',
-            subtitle: 'Regional grocery item translation',
-            icon: Icons.translate_rounded,
-            onTap: () => context.go('/translator'),
+        ],
+      ),
+    );
+  }
+}
+
+class ProfileScreen extends ConsumerStatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  final _fullName = TextEditingController();
+  final _email = TextEditingController();
+  final _phone = TextEditingController();
+  final _legalName = TextEditingController();
+  final _tradeName = TextEditingController();
+  final _industry = TextEditingController();
+  final _city = TextEditingController();
+  final _state = TextEditingController();
+  bool _hasGST = false;
+  String? _sessionId;
+
+  @override
+  void dispose() {
+    _fullName.dispose();
+    _email.dispose();
+    _phone.dispose();
+    _legalName.dispose();
+    _tradeName.dispose();
+    _industry.dispose();
+    _city.dispose();
+    _state.dispose();
+    super.dispose();
+  }
+
+  void _syncFromSession(AuthSession? session) {
+    if (session == null || _sessionId == session.accessToken) return;
+    _sessionId = session.accessToken;
+    _fullName.text = session.user.fullName;
+    _email.text = session.user.email;
+    _phone.text = session.user.phone ?? '';
+    _legalName.text = session.company.legalName;
+    _tradeName.text = session.company.tradeName ?? '';
+    _industry.text = session.company.industry ?? '';
+    _city.text = session.company.city ?? '';
+    _state.text = session.company.state ?? '';
+    _hasGST = session.company.hasGST;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = ref.watch(authProvider);
+    final session = auth.session;
+    _syncFromSession(session);
+    if (session == null) {
+      return const AppScaffold(
+        title: 'Profile',
+        child: EmptyState(
+          title: 'No profile loaded',
+          message: 'Login again to edit your profile.',
+          icon: Icons.person_off_rounded,
+        ),
+      );
+    }
+    return AppScaffold(
+      title: 'Profile',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ScreenHeader(
+            title: 'Editable profile',
+            subtitle:
+                'Update owner details and grocery shop profile. Changes are saved locally for web, PWA, mobile, and tablet.',
           ),
-          ModuleCard(
-            title: 'Printer setup',
-            subtitle: 'Wi-Fi and Bluetooth billing printers',
-            icon: Icons.print_rounded,
-            onTap: () => context.go('/printer-setup'),
+          FormSectionCard(
+            title: 'Owner details',
+            children: [
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  SizedBox(
+                    width: 320,
+                    child: TextField(
+                      controller: _fullName,
+                      decoration: const InputDecoration(
+                        labelText: 'Full name',
+                        prefixIcon: Icon(Icons.person_rounded),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 320,
+                    child: TextField(
+                      controller: _email,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email_rounded),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 240,
+                    child: TextField(
+                      controller: _phone,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone',
+                        prefixIcon: Icon(Icons.phone_rounded),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          ModuleCard(
-            title: 'Profile',
-            subtitle: 'Company and user profile',
-            icon: Icons.badge_rounded,
-            onTap: () => context.go('/profile'),
-          ),
-          ModuleCard(
-            title: 'Subscription',
-            subtitle: 'Pricing placeholder',
-            icon: Icons.workspace_premium_rounded,
-            onTap: () => context.go('/subscription'),
-          ),
-          ModuleCard(
-            title: 'Help/support',
-            subtitle: 'Support knowledge base',
-            icon: Icons.support_agent_rounded,
-            onTap: () => context.go('/help'),
+          const SizedBox(height: 16),
+          FormSectionCard(
+            title: 'Shop details',
+            trailing: StatusChip(session.company.friendlyClassification),
+            children: [
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  SizedBox(
+                    width: 340,
+                    child: TextField(
+                      controller: _legalName,
+                      decoration: const InputDecoration(
+                        labelText: 'Legal name',
+                        prefixIcon: Icon(Icons.storefront_rounded),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 340,
+                    child: TextField(
+                      controller: _tradeName,
+                      decoration: const InputDecoration(
+                        labelText: 'Trade name',
+                        prefixIcon: Icon(Icons.badge_rounded),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 260,
+                    child: TextField(
+                      controller: _industry,
+                      decoration: const InputDecoration(
+                        labelText: 'Industry',
+                        prefixIcon: Icon(Icons.category_rounded),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 220,
+                    child: TextField(
+                      controller: _city,
+                      decoration: const InputDecoration(
+                        labelText: 'City',
+                        prefixIcon: Icon(Icons.location_city_rounded),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 220,
+                    child: TextField(
+                      controller: _state,
+                      decoration: const InputDecoration(
+                        labelText: 'State',
+                        prefixIcon: Icon(Icons.map_rounded),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('GST registered shop'),
+                value: _hasGST,
+                onChanged: (value) => setState(() => _hasGST = value),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: PrimaryButton(
+                  label: 'Save profile',
+                  icon: Icons.save_rounded,
+                  onPressed: () async {
+                    await ref
+                        .read(authProvider.notifier)
+                        .updateProfile(
+                          fullName: _fullName.text.trim(),
+                          email: _email.text.trim(),
+                          phone: _phone.text.trim(),
+                          legalName: _legalName.text.trim(),
+                          tradeName: _tradeName.text.trim(),
+                          industry: _industry.text.trim(),
+                          city: _city.text.trim(),
+                          stateName: _state.text.trim(),
+                          hasGST: _hasGST,
+                        );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile saved locally.')),
+                      );
+                    }
+                  },
+                  accent: true,
+                ),
+              ),
+            ],
           ),
         ],
       ),

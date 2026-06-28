@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/app_language.dart';
+import '../../app/providers.dart';
 import '../../app/theme.dart';
 
-class PrimaryButton extends StatelessWidget {
+class PrimaryButton extends ConsumerWidget {
   const PrimaryButton({
     super.key,
     required this.label,
@@ -18,7 +21,8 @@ class PrimaryButton extends StatelessWidget {
   final bool accent;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     final style = FilledButton.styleFrom(
       backgroundColor: accent ? AppColors.orange : AppColors.navy,
     );
@@ -26,19 +30,19 @@ class PrimaryButton extends StatelessWidget {
       return FilledButton(
         style: style,
         onPressed: onPressed,
-        child: Text(label),
+        child: Text(appTranslate(label, language)),
       );
     }
     return FilledButton.icon(
       style: style,
       onPressed: onPressed,
       icon: Icon(icon),
-      label: Text(label),
+      label: Text(appTranslate(label, language)),
     );
   }
 }
 
-class AppTextField extends StatelessWidget {
+class AppTextField extends ConsumerWidget {
   const AppTextField({
     super.key,
     required this.label,
@@ -53,25 +57,27 @@ class AppTextField extends StatelessWidget {
   final int maxLines;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     return TextField(
       maxLines: maxLines,
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
+        labelText: appTranslate(label, language),
+        hintText: hint == null ? null : appTranslate(hint!, language),
         prefixIcon: icon == null ? null : Icon(icon),
       ),
     );
   }
 }
 
-class StatusChip extends StatelessWidget {
+class StatusChip extends ConsumerWidget {
   const StatusChip(this.label, {super.key});
 
   final String label;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     final lower = label.toLowerCase();
     final color =
         lower.contains('paid') ||
@@ -94,7 +100,7 @@ class StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        label,
+        appTranslate(label, language),
         style: TextStyle(
           color: color,
           fontWeight: FontWeight.w700,
@@ -242,7 +248,7 @@ class _ReportSparkline extends StatelessWidget {
   }
 }
 
-class ModuleCard extends StatelessWidget {
+class ModuleCard extends ConsumerWidget {
   const ModuleCard({
     super.key,
     required this.title,
@@ -257,7 +263,8 @@ class ModuleCard extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     final compact = MediaQuery.sizeOf(context).width < 420;
     return Card(
       child: InkWell(
@@ -281,7 +288,7 @@ class ModuleCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      appTranslate(title, language),
                       maxLines: compact ? 2 : 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -290,7 +297,7 @@ class ModuleCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      subtitle,
+                      appTranslate(subtitle, language),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -306,7 +313,7 @@ class ModuleCard extends StatelessWidget {
   }
 }
 
-class FormSectionCard extends StatelessWidget {
+class FormSectionCard extends ConsumerWidget {
   const FormSectionCard({
     super.key,
     required this.title,
@@ -319,7 +326,8 @@ class FormSectionCard extends StatelessWidget {
   final Widget? trailing;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -330,7 +338,7 @@ class FormSectionCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    title,
+                    appTranslate(title, language),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
@@ -348,7 +356,7 @@ class FormSectionCard extends StatelessWidget {
   }
 }
 
-class SearchFilterBar extends StatelessWidget {
+class SearchFilterBar extends ConsumerWidget {
   const SearchFilterBar({
     super.key,
     this.hint = 'Search',
@@ -361,7 +369,8 @@ class SearchFilterBar extends StatelessWidget {
   final VoidCallback? onAction;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     return Wrap(
       spacing: 12,
       runSpacing: 12,
@@ -374,7 +383,7 @@ class SearchFilterBar extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: () {},
           icon: const Icon(Icons.tune_rounded),
-          label: const Text('Filters'),
+          label: Text(appTranslate('Filters', language)),
         ),
         if (actionLabel != null && onAction != null)
           PrimaryButton(
@@ -388,7 +397,7 @@ class SearchFilterBar extends StatelessWidget {
   }
 }
 
-class EmptyState extends StatelessWidget {
+class EmptyState extends ConsumerWidget {
   const EmptyState({
     super.key,
     required this.title,
@@ -401,7 +410,8 @@ class EmptyState extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(28),
@@ -411,13 +421,13 @@ class EmptyState extends StatelessWidget {
             Icon(icon, size: 48, color: Theme.of(context).colorScheme.primary),
             const SizedBox(height: 12),
             Text(
-              title,
+              appTranslate(title, language),
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 6),
-            Text(message, textAlign: TextAlign.center),
+            Text(appTranslate(message, language), textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -483,7 +493,7 @@ class AIQuickActionCard extends StatelessWidget {
   }
 }
 
-class DataTableCard extends StatelessWidget {
+class DataTableCard extends ConsumerWidget {
   const DataTableCard({
     super.key,
     required this.title,
@@ -498,7 +508,8 @@ class DataTableCard extends StatelessWidget {
   final Widget? trailing;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -509,7 +520,7 @@ class DataTableCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    title,
+                    appTranslate(title, language),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),

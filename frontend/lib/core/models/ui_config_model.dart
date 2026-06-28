@@ -44,4 +44,18 @@ class UiConfigModel {
       showRoleDashboards: json['showRoleDashboards'] == true,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'uiPreset': uiPreset,
+    'dashboardTitle': dashboardTitle,
+    'primaryModules': primaryModules,
+    'quickActions': quickActions,
+    'hiddenModules': hiddenModules,
+    'showSimpleBilling': showSimpleBilling,
+    'showGSTAdvanced': showGSTAdvanced,
+    'showAIRecommendations': showAIRecommendations,
+    'showDepartmentViews': showDepartmentViews,
+    'showAdvancedAnalytics': showAdvancedAnalytics,
+    'showRoleDashboards': showRoleDashboards,
+  };
 }

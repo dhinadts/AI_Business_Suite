@@ -18,10 +18,10 @@ const primaryNavItems = [
   NavItem('GST', Icons.verified_rounded, '/gst'),
   NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
   NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
-  NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
   NavItem('OCR Upload', Icons.document_scanner_rounded, '/ocr-upload'),
   NavItem('Voice Billing', Icons.mic_rounded, '/voice-billing'),
   NavItem('Settings', Icons.settings_rounded, '/settings'),
+  NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
 ];
 
 const mobileNavItems = [
@@ -29,7 +29,7 @@ const mobileNavItems = [
   NavItem('Billing', Icons.receipt_long_rounded, '/billing'),
   NavItem('Inventory', Icons.inventory_2_rounded, '/inventory'),
   NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
-  NavItem('More', Icons.apps_rounded, '/settings'),
+  NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
 ];
 
 List<NavItem> primaryNavItemsForProfile(BusinessProfile profile) {
@@ -49,6 +49,7 @@ List<NavItem> primaryNavItemsForProfile(BusinessProfile profile) {
       NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
       NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
       NavItem('Settings', Icons.settings_rounded, '/settings'),
+      NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
     ];
   }
 
@@ -61,6 +62,7 @@ List<NavItem> primaryNavItemsForProfile(BusinessProfile profile) {
       NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
       NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
       NavItem('Settings', Icons.settings_rounded, '/settings'),
+      NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
     ];
   }
 
@@ -78,9 +80,9 @@ List<NavItem> primaryNavItemsForProfile(BusinessProfile profile) {
       NavItem('GST', Icons.verified_rounded, '/gst'),
       NavItem('Reports', Icons.bar_chart_rounded, '/reports'),
       NavItem('Associations', Icons.account_balance_rounded, '/notifications'),
-      NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
       NavItem('Voice Billing', Icons.mic_rounded, '/voice-billing'),
       NavItem('Settings', Icons.settings_rounded, '/settings'),
+      NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
     ];
   }
 
@@ -94,7 +96,7 @@ List<NavItem> mobileNavItemsForProfile(BusinessProfile profile) {
       NavItem('Sale', Icons.point_of_sale_rounded, '/billing/stall-sale'),
       NavItem('Voice', Icons.mic_rounded, '/voice-billing'),
       NavItem('Stock', Icons.inventory_2_rounded, '/inventory'),
-      NavItem('More', Icons.apps_rounded, '/settings'),
+      NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
     ];
   }
   return mobileNavItems;
@@ -141,6 +143,11 @@ NavItem navItemForModule(String module) {
       Icons.factory_rounded,
       '/settings',
     ),
+    'ai assistant' || 'ai' => const NavItem(
+      'AI Assistant',
+      Icons.auto_awesome_rounded,
+      '/ai-assistant',
+    ),
     'admin' => const NavItem(
       'Admin',
       Icons.admin_panel_settings_rounded,
@@ -161,7 +168,11 @@ List<NavItem> navItemsForUiModules(
   if (mobile && items.length > 5) {
     return [
       ...items.take(4),
-      const NavItem('More', Icons.apps_rounded, '/settings'),
+      const NavItem(
+        'AI Assistant',
+        Icons.auto_awesome_rounded,
+        '/ai-assistant',
+      ),
     ];
   }
   if (mobile) return items;
@@ -173,6 +184,7 @@ List<NavItem> navItemsForUiModules(
       '/notifications',
     ),
     const NavItem('Settings', Icons.settings_rounded, '/settings'),
+    const NavItem('AI Assistant', Icons.auto_awesome_rounded, '/ai-assistant'),
   ];
 }
 

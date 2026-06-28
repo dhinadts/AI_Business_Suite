@@ -1,20 +1,17 @@
 import '../data/auth_api.dart';
 import '../data/auth_repository.dart';
 import 'package:dio/dio.dart';
+import '../../../app/providers.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../../core/network/api_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/storage/secure_storage_service.dart';
 
-final secureStorageProvider = Provider<SecureStorageService>(
-  (ref) => SecureStorageService(),
-);
 final apiClientProvider = Provider<ApiClient>(
-  (ref) => ApiClient(ref.watch(secureStorageProvider)),
+  (ref) => ApiClient(ref.watch(appLocalStorageProvider)),
 );
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final api = AuthApi(ref.watch(apiClientProvider));
-  return AuthRepository(api, ref.watch(secureStorageProvider));
+  return AuthRepository(api, ref.watch(appLocalStorageProvider));
 });
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
@@ -136,6 +133,38 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> logout() async {
     await repository.logout();
     state = const AuthState(loading: false);
+  }
+
+  Future<void> updateProfile({
+    required String fullName,
+    required String email,
+    String? phone,
+    required String legalName,
+    String? tradeName,
+    String? industry,
+    String? city,
+    String? stateName,
+    required bool hasGST,
+  }) async {
+    final session = state.session;
+    if (session == null) return;
+    final updated = session.copyWith(
+      user: session.user.copyWith(
+        fullName: fullName,
+        email: email,
+        phone: phone,
+      ),
+      company: session.company.copyWith(
+        legalName: legalName,
+        tradeName: tradeName,
+        industry: industry,
+        city: city,
+        state: stateName,
+        hasGST: hasGST,
+      ),
+    );
+    await repository.saveSession(updated);
+    state = state.copyWith(session: updated, clearError: true);
   }
 
   void consumeSignupFlag() {

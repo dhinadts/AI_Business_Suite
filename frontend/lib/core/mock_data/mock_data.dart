@@ -39,6 +39,146 @@ const invoices = [
   Invoice('BILL-1045', 'Anita Devi', 946, 'Draft', '21 Jun 2026'),
 ];
 
+const scannedStockIntakeItems = [
+  StockIntakeItem(
+    'Rice Sona Masoori 5kg',
+    'SUP-8841',
+    12,
+    'bags',
+    312,
+    360,
+    'Store room',
+    'Matched',
+  ),
+  StockIntakeItem(
+    'Sunflower Oil 1L',
+    'SUP-8841',
+    24,
+    'bottles',
+    121,
+    142,
+    'Shelf stock',
+    'Matched',
+  ),
+  StockIntakeItem(
+    'Toor Dal 1kg',
+    'SUP-8841',
+    18,
+    'packets',
+    139,
+    165,
+    'Store room',
+    'Review',
+  ),
+  StockIntakeItem(
+    'Thermal billing roll',
+    'SUP-8842',
+    30,
+    'pieces',
+    24,
+    35,
+    'Consumables',
+    'New SKU',
+  ),
+];
+
+const excelStockIntakeItems = [
+  StockIntakeItem(
+    'A4 copier paper',
+    'BULK-XLS-42',
+    50,
+    'reams',
+    236,
+    285,
+    'Office inventory',
+    'Mapped',
+  ),
+  StockIntakeItem(
+    'Packing tape',
+    'BULK-XLS-42',
+    80,
+    'rolls',
+    28,
+    42,
+    'Warehouse',
+    'Mapped',
+  ),
+  StockIntakeItem(
+    'Printer ink black',
+    'BULK-XLS-42',
+    14,
+    'cartridges',
+    690,
+    840,
+    'Service stock',
+    'Needs HSN',
+  ),
+];
+
+const saleDeductionRules = [
+  SaleDeductionRule(
+    'Counter bill',
+    'Shelf stock',
+    'Deduct immediately on save',
+    'Active',
+  ),
+  SaleDeductionRule(
+    'Tax invoice',
+    'Warehouse or branch stock',
+    'Reserve on draft, deduct on paid or dispatched',
+    'Active',
+  ),
+  SaleDeductionRule(
+    'Service invoice',
+    'Consumables inventory',
+    'Deduct mapped materials only',
+    'Optional',
+  ),
+  SaleDeductionRule(
+    'Purchase return',
+    'Original intake batch',
+    'Reverse stock quantity and landed cost',
+    'Controlled',
+  ),
+];
+
+const voiceBillLines = [
+  VoiceBillLine('Rice Sona Masoori 5kg', 1, 'bag', 360),
+  VoiceBillLine('Milk 500ml', 2, 'packet', 32),
+  VoiceBillLine('Toor Dal 1kg', 1, 'packet', 165),
+];
+
+const printerRecommendations = [
+  PrinterRecommendation(
+    'Budget 58mm Bluetooth thermal printer',
+    'Low cost',
+    'Bluetooth / USB',
+    'New small grocery shops with phone billing',
+    'Cheapest start. Good for compact receipts, but paper width and cutter life are limited.',
+  ),
+  PrinterRecommendation(
+    'Rugtek / similar 80mm thermal printer',
+    'Mid range',
+    'USB / LAN / Bluetooth variants',
+    'Busy counters that need clearer 80mm receipts',
+    'Good balance for Indian stores when service support is available locally.',
+  ),
+  PrinterRecommendation(
+    'TVS RP 3200 Plus',
+    'Mid to durable',
+    'USB / Serial / Ethernet variants',
+    'Indian grocery and supermarket POS counters',
+    'Common Indian POS choice with stronger duty cycle than tiny mobile printers.',
+  ),
+  PrinterRecommendation(
+    'Epson TM-T82III',
+    'Long life',
+    'USB / Ethernet / optional wireless variants',
+    'High-volume shops needing durable printing',
+    'Best long-term option when budget allows and receipt printing is daily heavy use.',
+  ),
+];
+
 const reportMetrics = [
   ReportMetric('Monthly Revenue', '₹18.4L', '+12.5%', [
     8.5,

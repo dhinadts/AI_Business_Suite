@@ -62,4 +62,49 @@ class CompanyModel {
       hasGST: json['hasGST'] == true,
     );
   }
+
+  CompanyModel copyWith({
+    String? legalName,
+    String? tradeName,
+    String? industry,
+    String? city,
+    String? state,
+    bool? hasGST,
+  }) {
+    return CompanyModel(
+      id: id,
+      legalName: legalName ?? this.legalName,
+      tradeName: tradeName ?? this.tradeName,
+      businessType: businessType,
+      classification: classification,
+      uiPreset: uiPreset,
+      industry: industry ?? this.industry,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      employeeCount: employeeCount,
+      monthlyRevenue: monthlyRevenue,
+      branchCount: branchCount,
+      skuCount: skuCount,
+      invoiceVolume: invoiceVolume,
+      hasGST: hasGST ?? this.hasGST,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'legalName': legalName,
+    'tradeName': tradeName,
+    'businessType': businessType,
+    'classification': classification,
+    'uiPreset': uiPreset,
+    'industry': industry,
+    'city': city,
+    'state': state,
+    'employeeCount': employeeCount,
+    'monthlyRevenue': monthlyRevenue,
+    'branchCount': branchCount,
+    'skuCount': skuCount,
+    'invoiceVolume': invoiceVolume,
+    'hasGST': hasGST,
+  };
 }

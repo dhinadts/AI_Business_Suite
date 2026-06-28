@@ -191,11 +191,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/profile',
-        builder: (context, state) => const SimpleInfoScreen(
-          title: 'Profile',
-          message: 'DHINADTS company profile and user preferences placeholder.',
-          icon: Icons.badge_rounded,
-        ),
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/subscription',

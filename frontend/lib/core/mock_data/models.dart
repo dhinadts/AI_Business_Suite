@@ -20,6 +20,16 @@ class Product {
   final int stock;
   final double price;
   final String status;
+
+  Product copyWith({int? stock, double? price, String? status}) {
+    return Product(
+      name,
+      sku,
+      stock ?? this.stock,
+      price ?? this.price,
+      status ?? this.status,
+    );
+  }
 }
 
 class Invoice {
@@ -35,6 +45,67 @@ class Invoice {
   final double amount;
   final String status;
   final String date;
+}
+
+class StockIntakeItem {
+  const StockIntakeItem(
+    this.product,
+    this.invoice,
+    this.quantity,
+    this.unit,
+    this.purchaseRate,
+    this.salePrice,
+    this.destination,
+    this.status,
+  );
+  final String product;
+  final String invoice;
+  final double quantity;
+  final String unit;
+  final double purchaseRate;
+  final double salePrice;
+  final String destination;
+  final String status;
+}
+
+class SaleDeductionRule {
+  const SaleDeductionRule(
+    this.invoiceType,
+    this.stockSource,
+    this.deduction,
+    this.status,
+  );
+  final String invoiceType;
+  final String stockSource;
+  final String deduction;
+  final String status;
+}
+
+class VoiceBillLine {
+  const VoiceBillLine(this.product, this.quantity, this.unit, this.rate);
+
+  final String product;
+  final double quantity;
+  final String unit;
+  final double rate;
+
+  double get total => quantity * rate;
+}
+
+class PrinterRecommendation {
+  const PrinterRecommendation(
+    this.name,
+    this.range,
+    this.connectivity,
+    this.bestFor,
+    this.note,
+  );
+
+  final String name;
+  final String range;
+  final String connectivity;
+  final String bestFor;
+  final String note;
 }
 
 class ReportMetric {
